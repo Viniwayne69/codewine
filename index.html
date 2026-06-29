@@ -4,28 +4,28 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Code Wine</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='10' y1='8' x2='54' y2='58' gradientUnits='userSpaceOnUse'%3E%3Cstop stop-color='%23bc13fe'/%3E%3Cstop offset='.55' stop-color='%23ff0055'/%3E%3Cstop offset='1' stop-color='%2300ff9f'/%3E%3C/linearGradient%3E%3Cfilter id='glow' x='-30%25' y='-30%25' width='160%25' height='160%25'%3E%3CfeGaussianBlur stdDeviation='2.2' result='b'/%3E%3CfeMerge%3E%3CfeMergeNode in='b'/%3E%3CfeMergeNode in='SourceGraphic'/%3E%3C/feMerge%3E%3C/filter%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='%23070216'/%3E%3Cpath d='M18 10h28l5 21c2 14-7 24-19 24S11 45 13 31l5-21Z' fill='%2315162f' stroke='url(%23g)' stroke-width='3' filter='url(%23glow)'/%3E%3Cpath d='M26 24l-7 7 7 7M38 24l7 7-7 7M35 22l-6 20' fill='none' stroke='%2300ff9f' stroke-width='3.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M32 54v6M23 60h18' fill='none' stroke='%23bc13fe' stroke-width='3.4' stroke-linecap='round'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #16063a;
-      --bg-deep: #0b0320;
-      --sidebar: #12132d;
-      --card: #232647;
-      --card-soft: #1b1e3a;
-      --line: rgba(211, 80, 255, .38);
-      --line-strong: rgba(211, 80, 255, .78);
+      --bg: #2f315f;
+      --bg-deep: #24264b;
+      --panel: #353766;
+      --panel-soft: #3c3e70;
+      --card: #3b3d70;
+      --line: rgba(211, 80, 255, .32);
+      --line-strong: rgba(211, 80, 255, .72);
       --purple: #bc13fe;
       --green: #00ff9f;
       --blue: #00b8ff;
       --magenta: #ff0055;
       --yellow: #f7ff00;
       --text: #ffffff;
-      --muted: #c7c5da;
-      --muted-2: #e1def2;
-      --shadow-purple: 0 0 28px rgba(188, 19, 254, .34);
-      --shadow-green: 0 0 22px rgba(0, 255, 159, .26);
+      --muted: #d7d2ea;
+      --muted-2: #f1ecff;
+      --danger: #ff4d6d;
       --radius: 8px;
       --gap: clamp(10px, 1.1vw, 16px);
       color-scheme: dark;
@@ -35,9 +35,13 @@
       box-sizing: border-box;
     }
 
+    * {
+      min-width: 0;
+    }
+
     html {
       height: 100%;
-      background: var(--bg-deep);
+      background: var(--bg);
     }
 
     body {
@@ -46,23 +50,19 @@
       font-family: "Open Sans", system-ui, sans-serif;
       color: var(--text);
       background:
-        radial-gradient(circle at 18% 10%, rgba(188, 19, 254, .28), transparent 25rem),
-        radial-gradient(circle at 82% 24%, rgba(0, 184, 255, .22), transparent 28rem),
-        radial-gradient(circle at 58% 88%, rgba(0, 255, 159, .1), transparent 22rem),
-        linear-gradient(135deg, #10052d 0%, var(--bg) 48%, #13052d 100%);
+        radial-gradient(circle at 14% 8%, rgba(188, 19, 254, .22), transparent 28rem),
+        radial-gradient(circle at 86% 20%, rgba(0, 184, 255, .16), transparent 30rem),
+        radial-gradient(circle at 55% 96%, rgba(0, 255, 159, .08), transparent 24rem),
+        linear-gradient(135deg, #2b2d58 0%, var(--bg) 50%, #292956 100%);
       overflow: hidden;
     }
 
     button,
     input,
-    textarea {
+    textarea,
+    select {
       font: inherit;
-    }
-
-    input::placeholder,
-    textarea::placeholder {
-      color: #d2cee4;
-      opacity: 1;
+      max-width: 100%;
     }
 
     button {
@@ -75,12 +75,45 @@
       color: inherit;
     }
 
+    svg {
+      max-width: 100%;
+    }
+
+    textarea,
+    input {
+      width: 100%;
+      border: 1px solid rgba(255, 255, 255, .14);
+      border-radius: 7px;
+      outline: 0;
+      background: rgba(35, 37, 72, .88);
+      color: #fff;
+    }
+
+    textarea {
+      min-height: 140px;
+      padding: 12px;
+      resize: vertical;
+      line-height: 1.62;
+    }
+
+    input {
+      min-height: 40px;
+      padding: 8px 10px;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: #cfc9e7;
+      opacity: 1;
+    }
+
     .app-shell {
-      display: grid;
-      grid-template-columns: clamp(220px, 18vw, 280px) minmax(0, 1fr) clamp(320px, 26vw, 420px);
       height: 100vh;
+      display: grid;
+      grid-template-columns: clamp(220px, 18vw, 280px) minmax(0, 1fr) clamp(340px, 27vw, 460px);
       gap: var(--gap);
       padding: var(--gap);
+      width: 100%;
     }
 
     .sidebar,
@@ -90,34 +123,30 @@
       overflow-y: auto;
       border: 1px solid var(--line);
       border-radius: var(--radius);
-      background: linear-gradient(180deg, rgba(24, 25, 54, .97), rgba(14, 10, 39, .95));
-      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .06), var(--shadow-purple);
+      background: linear-gradient(180deg, rgba(55, 57, 104, .98), rgba(43, 42, 86, .98));
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .055), 0 0 26px rgba(188, 19, 254, .22);
       scrollbar-width: thin;
       scrollbar-color: rgba(188, 19, 254, .7) rgba(255, 255, 255, .06);
     }
 
-    .main-panel:focus {
-      outline: none;
-    }
-
     .sidebar {
-      padding: clamp(16px, 1.4vw, 22px);
+      padding: clamp(15px, 1.25vw, 22px);
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 18px;
     }
 
     .main-panel {
-      padding: clamp(16px, 1.5vw, 24px);
+      padding: clamp(15px, 1.4vw, 24px);
     }
 
     .notes-panel {
-      padding: clamp(14px, 1.3vw, 20px);
+      padding: clamp(14px, 1.2vw, 20px);
     }
 
     .brand {
       display: grid;
-      gap: 12px;
+      gap: 10px;
     }
 
     .brand-mark {
@@ -129,41 +158,31 @@
     .wine-icon {
       width: 44px;
       height: 54px;
-      filter: drop-shadow(0 0 10px rgba(255, 0, 85, .55));
+      filter: drop-shadow(0 0 12px rgba(255, 0, 85, .52));
     }
 
-    .brand h1,
-    .page-title h2,
-    .card-title,
-    .metric-value,
-    .track-title,
-    .topic-title,
-    .project-title {
-      font-family: "Open Sans", system-ui, sans-serif;
-      letter-spacing: 0;
+    h1,
+    h2,
+    h3,
+    p {
+      margin-top: 0;
     }
 
     .brand h1 {
       margin: 0;
-      font-size: clamp(1.05rem, 1.45vw, 1.35rem);
-      color: #fff;
-      text-shadow: 0 0 16px rgba(255, 0, 85, .78);
+      font-size: clamp(1.1rem, 1.45vw, 1.35rem);
+      text-shadow: 0 0 16px rgba(255, 0, 85, .72);
     }
 
-    .brand p {
-      margin: 0;
+    .brand p,
+    .muted {
       color: var(--muted-2);
-      line-height: 1.35;
-      max-width: 18rem;
+      line-height: 1.42;
       font-weight: 500;
     }
 
     .nav-list,
-    .module-list,
-    .lesson-list,
-    .check-list,
-    .concept-list,
-    .project-checklist {
+    .clean-list {
       list-style: none;
       padding: 0;
       margin: 0;
@@ -176,44 +195,46 @@
 
     .nav-button {
       width: 100%;
+      min-height: 44px;
       display: grid;
-      grid-template-columns: 28px 1fr auto;
+      grid-template-columns: 30px 1fr auto;
       align-items: center;
       gap: 10px;
-      min-height: 44px;
       padding: 9px 10px;
       border: 1px solid transparent;
       border-radius: 7px;
       background: transparent;
       color: var(--muted-2);
       text-align: left;
-      font-weight: 600;
-      transition: border-color .18s ease, background .18s ease, transform .18s ease, color .18s ease;
+      font-weight: 700;
+      transition: transform .18s ease, border-color .18s ease, background .18s ease;
+    }
+
+    .nav-button span:nth-child(2) {
+      overflow-wrap: anywhere;
     }
 
     .nav-button:hover,
     .nav-button.active {
-      border-color: var(--line-strong);
-      background: linear-gradient(90deg, rgba(188, 19, 254, .24), rgba(255, 0, 85, .08));
-      color: #fff;
       transform: translateX(2px);
+      border-color: var(--line-strong);
+      background: linear-gradient(90deg, rgba(188, 19, 254, .22), rgba(255, 0, 85, .08));
+      color: #fff;
+    }
+
+    .nav-icon,
+    .status-dot {
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255, 255, 255, .14);
+      background: rgba(255, 255, 255, .07);
     }
 
     .nav-icon {
-      display: grid;
-      place-items: center;
-      width: 28px;
-      height: 28px;
-      border: 1px solid rgba(255, 255, 255, .12);
-      border-radius: 6px;
+      width: 30px;
+      height: 30px;
+      border-radius: 7px;
       color: var(--purple);
-      background: rgba(255, 255, 255, .075);
-    }
-
-    .nav-percent {
-      font-size: .78rem;
-      color: var(--muted);
-      font-weight: 700;
     }
 
     .sidebar-footer {
@@ -223,21 +244,16 @@
       border-radius: var(--radius);
       background: rgba(0, 255, 159, .075);
       color: var(--muted-2);
-      line-height: 1.35;
-    }
-
-    .sidebar-footer strong {
-      color: var(--green);
-      font-weight: 700;
+      line-height: 1.42;
     }
 
     .topbar,
     .page-title,
     .card-head,
-    .topic-head,
+    .row,
+    .action-row,
     .notes-head,
-    .backup-actions,
-    .action-row {
+    .backup-actions {
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -245,34 +261,32 @@
     }
 
     .topbar {
-      margin-bottom: clamp(14px, 1.3vw, 20px);
+      margin-bottom: 16px;
+      flex-wrap: wrap;
     }
 
     .breadcrumb {
       color: var(--muted);
-      font-size: clamp(.9rem, .9vw, 1rem);
-      font-weight: 600;
+      font-weight: 700;
     }
 
     .search-box {
       display: flex;
       align-items: center;
       gap: 8px;
-      min-width: min(280px, 38vw);
+      min-width: min(320px, 42vw);
       padding: 8px 10px;
-      border: 1px solid rgba(255, 255, 255, .16);
+      border: 1px solid rgba(255, 255, 255, .14);
       border-radius: 7px;
-      background: rgba(255, 255, 255, .075);
+      background: rgba(255, 255, 255, .07);
       color: var(--muted);
     }
 
     .search-box input {
-      width: 100%;
+      min-height: unset;
+      padding: 0;
       border: 0;
-      outline: 0;
       background: transparent;
-      color: var(--text);
-      font-weight: 500;
     }
 
     .page-title {
@@ -282,164 +296,426 @@
 
     .page-title h2 {
       margin: 0 0 6px;
-      font-size: clamp(1.35rem, 2.1vw, 2.2rem);
+      font-size: clamp(1.35rem, 2vw, 2.15rem);
     }
 
     .page-title p {
-      margin: 0;
-      color: var(--muted-2);
-      max-width: 72ch;
-      line-height: 1.45;
-      font-weight: 500;
+      display: none;
+    }
+
+    .grid {
+      display: grid;
+      gap: var(--gap);
     }
 
     .dashboard-grid {
       display: grid;
       grid-template-columns: repeat(12, minmax(0, 1fr));
       gap: var(--gap);
+      align-items: start;
     }
 
-    .card {
-      border: 1px solid rgba(188, 19, 254, .22);
+    .span-12 { grid-column: span 12; }
+    .span-8 { grid-column: span 8; }
+    .span-7 { grid-column: span 7; }
+    .span-6 { grid-column: span 6; }
+    .span-5 { grid-column: span 5; }
+    .span-4 { grid-column: span 4; }
+    .span-3 { grid-column: span 3; }
+
+    .card,
+    .topic-hero,
+    .module-card,
+    .track-card,
+    .project-card,
+    .lesson-card,
+    .error-card {
+      border: 1px solid rgba(255, 255, 255, .16);
       border-radius: var(--radius);
-      background: linear-gradient(180deg, rgba(36, 39, 76, .92), rgba(25, 20, 56, .9));
-      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .055);
+      background: linear-gradient(180deg, rgba(62, 64, 112, .96), rgba(50, 51, 95, .94));
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .065);
     }
 
-    .card-pad {
-      padding: clamp(14px, 1.25vw, 18px);
+    .card-pad,
+    .topic-hero,
+    .module-card,
+    .track-card,
+    .project-card,
+    .lesson-card,
+    .error-card {
+      padding: clamp(13px, 1.15vw, 18px);
     }
 
-    .card:hover {
-      border-color: rgba(188, 19, 254, .52);
+    .card-title,
+    .section-title {
+      margin: 0 0 12px;
+      font-size: .96rem;
     }
 
-    .span-7 {
-      grid-column: span 7;
+    .metric-value {
+      font-size: clamp(1.7rem, 2.6vw, 3rem);
+      font-weight: 800;
     }
 
-    .span-5 {
-      grid-column: span 5;
-    }
-
-    .span-4 {
-      grid-column: span 4;
-    }
-
-    .span-3 {
-      grid-column: span 3;
-    }
-
-    .card-title {
-      margin: 0;
-      font-size: .92rem;
-      color: #fff;
-    }
-
-    .progress-summary {
-      display: grid;
-      grid-template-columns: 150px 1fr;
-      align-items: center;
-      gap: 22px;
-      margin-top: 12px;
+    .metric-label {
+      color: var(--muted-2);
+      font-size: .88rem;
+      font-weight: 700;
     }
 
     .progress-ring {
       --value: 0deg;
-      width: clamp(116px, 11vw, 150px);
+      width: clamp(112px, 10vw, 148px);
       aspect-ratio: 1;
       display: grid;
       place-items: center;
       border-radius: 50%;
-      background:
-        radial-gradient(circle, #111225 0 55%, transparent 56%),
-        conic-gradient(var(--green) var(--value), rgba(255, 255, 255, .11) 0);
-      box-shadow: var(--shadow-green);
+      background: radial-gradient(circle, #272951 0 55%, transparent 56%), conic-gradient(var(--green) var(--value), rgba(255, 255, 255, .18) 0);
+      box-shadow: 0 0 22px rgba(0, 255, 159, .2);
     }
 
-    .metric-value {
-      font-size: clamp(1.75rem, 2.7vw, 3rem);
-      font-weight: 800;
+    .progress-summary {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      align-items: center;
+      gap: 22px;
+    }
+
+    .dashboard-summary {
+      align-items: center;
+      gap: clamp(16px, 1.5vw, 24px);
+    }
+
+    .dashboard-copy {
+      min-width: 0;
+      display: grid;
+      align-content: center;
+      gap: 14px;
+    }
+
+    .dashboard-copy h3 {
+      margin: 0;
+      font-size: clamp(1.1rem, 1.35vw, 1.45rem);
+    }
+
+    .metric-strip {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .metric-chip {
+      min-height: 72px;
+      display: grid;
+      align-content: center;
+      gap: 4px;
+      padding: 12px;
+      border: 1px solid rgba(0, 184, 255, .22);
+      border-radius: var(--radius);
+      background: rgba(45, 48, 88, .72);
+    }
+
+    .metric-chip .metric-value {
+      font-size: clamp(1.25rem, 1.6vw, 2rem);
+      line-height: 1;
+      color: #f1fff9;
+    }
+
+    .metric-chip .metric-label {
+      font-size: .78rem;
+      color: var(--muted);
+    }
+
+    .today-card {
+      min-height: 100%;
+      display: grid;
+      align-content: start;
+      gap: 14px;
+      background:
+        linear-gradient(135deg, rgba(188, 19, 254, .18), rgba(0, 184, 255, .07)),
+        linear-gradient(180deg, rgba(62, 64, 112, .95), rgba(50, 51, 95, .92));
+    }
+
+    .recommendation-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .recommendation-title {
+      margin: 0;
+      font-size: clamp(1.2rem, 1.45vw, 1.6rem);
+      line-height: 1.2;
+    }
+
+    .recommendation-reason {
+      margin: 0;
+      color: var(--muted-2);
+      line-height: 1.48;
+      font-weight: 600;
+    }
+
+    .dashboard-compact {
+      display: grid;
+      gap: 10px;
     }
 
     .metric-list {
       display: grid;
-      gap: 8px;
+      gap: 10px;
       color: var(--muted-2);
-      font-weight: 500;
+      font-weight: 600;
+    }
+
+    .metric-list span {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, .1);
+    }
+
+    .metric-list span,
+    .track-desc,
+    .recommendation-reason,
+    .mini-row,
+    .practice-box,
+    .terminal-box,
+    .empty-state {
+      overflow-wrap: anywhere;
+    }
+
+    .metric-list span:last-child {
+      border-bottom: 0;
     }
 
     .metric-list strong {
       color: #fff;
-      font-size: 1.05rem;
+      font-size: 1.02rem;
     }
 
     .continue-card {
       display: grid;
-      gap: 16px;
-      min-height: 100%;
+      gap: 14px;
+      align-content: start;
     }
 
     .focus-box {
       padding: 16px;
-      border: 1px solid rgba(255, 0, 85, .46);
+      border: 1px solid rgba(255, 0, 85, .42);
       border-radius: var(--radius);
-      background: linear-gradient(135deg, rgba(255, 0, 85, .2), rgba(188, 19, 254, .16));
+      background: linear-gradient(135deg, rgba(255, 0, 85, .18), rgba(188, 19, 254, .14));
     }
 
     .focus-box h3 {
-      margin: 0 0 4px;
-      font-family: "Open Sans", system-ui, sans-serif;
+      margin: 0 0 6px;
       font-size: clamp(1rem, 1.2vw, 1.25rem);
     }
 
     .focus-box p {
-      margin: 0;
+      margin: 0 0 8px;
       color: var(--muted-2);
+      line-height: 1.42;
+      font-weight: 600;
+    }
+
+    .today-list,
+    .small-stack {
+      display: grid;
+      gap: 10px;
+    }
+
+    .terminal-tip {
+      padding: 13px;
+      border: 1px solid rgba(0, 255, 159, .18);
+      border-radius: var(--radius);
+      background: rgba(0, 255, 159, .075);
+      color: #d8fff3;
+      line-height: 1.48;
+      font-weight: 600;
+    }
+
+    .week-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: var(--gap);
+    }
+
+    .week-title {
+      display: grid;
+      gap: 4px;
+    }
+
+    .week-title h3 {
+      margin: 0;
+      font-size: clamp(1.1rem, 1.55vw, 1.55rem);
+    }
+
+    .week-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 10px;
+      padding-bottom: 4px;
+    }
+
+    .day-card {
+      min-width: 150px;
+      display: grid;
+      gap: 10px;
+      padding: 12px;
+      border: 1px solid rgba(188, 19, 254, .22);
+      border-radius: var(--radius);
+      background: rgba(54, 56, 104, .74);
+    }
+
+    .day-card.today {
+      border-color: rgba(0, 255, 159, .5);
+      box-shadow: 0 0 18px rgba(0, 255, 159, .12);
+    }
+
+    .day-card.done {
+      border-color: rgba(0, 255, 159, .35);
+      background: rgba(0, 255, 159, .06);
+    }
+
+    .day-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .day-name {
+      margin: 0;
+      font-size: .92rem;
+    }
+
+    .day-date {
+      color: var(--muted);
+      font-size: .78rem;
+      font-weight: 800;
+    }
+
+    .day-card textarea {
+      min-height: 58px;
+      padding: 9px;
+      font-size: .86rem;
+      line-height: 1.45;
+    }
+
+    .day-card input[type="number"] {
+      min-height: 34px;
+      padding: 6px 8px;
+    }
+
+    .day-check {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted-2);
+      font-size: .82rem;
+      font-weight: 800;
+    }
+
+    .day-check input {
+      width: 17px;
+      min-height: 17px;
+      accent-color: var(--green);
+    }
+
+    .week-review-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--gap);
+    }
+
+    .progress-bar {
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .14);
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0;
+      border-radius: inherit;
+      background: var(--fill-color, var(--green));
+      box-shadow: 0 0 12px var(--fill-color, var(--green));
+      transition: width .22s ease;
     }
 
     .btn {
+      min-height: 38px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 9px;
-      min-height: 38px;
-      padding: 9px 14px;
+      gap: 8px;
+      padding: 9px 13px;
       border: 1px solid rgba(188, 19, 254, .72);
       border-radius: 6px;
-      background: linear-gradient(90deg, rgba(188, 19, 254, .62), rgba(255, 0, 85, .45));
+      background: linear-gradient(90deg, rgba(188, 19, 254, .58), rgba(255, 0, 85, .38));
       color: #fff;
-      font-family: "Open Sans", system-ui, sans-serif;
-      font-size: .78rem;
+      font-size: .79rem;
+      font-weight: 800;
       text-transform: uppercase;
-      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+      letter-spacing: 0;
+      text-decoration: none;
+      transition: transform .18s ease, box-shadow .18s ease;
     }
 
     .btn:hover {
       transform: translateY(-1px);
-      border-color: rgba(255, 0, 85, .9);
-      box-shadow: 0 0 20px rgba(188, 19, 254, .28);
+      box-shadow: 0 0 18px rgba(188, 19, 254, .24);
     }
 
     .btn.secondary {
-      border-color: rgba(0, 184, 255, .72);
-      background: rgba(0, 184, 255, .15);
+      border-color: rgba(0, 184, 255, .68);
+      background: rgba(0, 184, 255, .14);
     }
 
     .btn.ghost {
-      border-color: rgba(255, 255, 255, .12);
-      background: rgba(255, 255, 255, .08);
+      border-color: rgba(255, 255, 255, .16);
+      background: rgba(255, 255, 255, .075);
     }
 
     .btn.danger {
       border-color: rgba(255, 0, 85, .78);
-      background: rgba(255, 0, 85, .17);
+      background: rgba(255, 0, 85, .18);
+    }
+
+    .pill,
+    .status-badge,
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      width: fit-content;
+      padding: 5px 8px;
+      border: 1px solid currentColor;
+      border-radius: 999px;
+      color: var(--status-color, var(--green));
+      background: color-mix(in srgb, var(--status-color, var(--green)) 10%, transparent);
+      font-size: .76rem;
+      font-weight: 800;
+      white-space: nowrap;
     }
 
     .track-grid,
     .topic-grid,
     .project-grid,
-    .lesson-grid {
+    .lesson-grid,
+    .mini-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: var(--gap);
@@ -447,8 +723,7 @@
 
     .track-card {
       padding: 14px;
-      border: 1px solid rgba(255, 255, 255, .16);
-      border-radius: var(--radius);
+      border-color: rgba(255, 255, 255, .16);
       background: rgba(255, 255, 255, .065);
       transition: transform .18s ease, border-color .18s ease;
     }
@@ -480,58 +755,70 @@
       border: 1px solid var(--track-color);
       border-radius: 8px;
       color: var(--track-color);
-      font-family: "Open Sans", system-ui, sans-serif;
       box-shadow: 0 0 14px color-mix(in srgb, var(--track-color) 36%, transparent);
+      font-weight: 700;
+    }
+
+    .track-percent {
+      color: #fff;
+      font-weight: 800;
     }
 
     .track-title {
-      margin: 0;
+      margin: 0 0 12px;
+      font-size: 1.05rem;
+    }
+
+    .track-desc {
+      color: var(--muted-2);
+      line-height: 1.42;
+      font-weight: 600;
+    }
+
+    .topic-item {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 32px 1fr auto;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      border: 1px solid rgba(255, 255, 255, .12);
+      border-radius: 7px;
+      background: rgba(255, 255, 255, .06);
+      text-align: left;
+    }
+
+    .topic-item:hover,
+    .topic-item.active {
+      border-color: rgba(0, 184, 255, .5);
+      background: rgba(0, 184, 255, .07);
+    }
+
+    .status-dot {
+      width: 25px;
+      height: 25px;
+      border-radius: 50%;
+      color: var(--status-color);
+      font-size: .8rem;
+      font-weight: 800;
+    }
+
+    .module-card {
+      margin-bottom: var(--gap);
+    }
+
+    .module-card h3 {
+      margin-bottom: 4px;
       font-size: 1rem;
     }
 
-    .track-desc,
-    .topic-desc,
-    .lesson-meta,
-    .project-meta {
-      color: var(--muted-2);
-      line-height: 1.38;
-      font-weight: 500;
-    }
-
-    .progress-bar {
-      height: 8px;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, .16);
-      overflow: hidden;
-    }
-
-    .progress-fill {
-      height: 100%;
-      width: 0;
-      border-radius: inherit;
-      background: var(--fill-color, var(--green));
-      box-shadow: 0 0 12px var(--fill-color, var(--green));
-      transition: width .25s ease;
-    }
-
-    .small-stack {
-      display: grid;
-      gap: 10px;
-    }
-
-    .today-list {
-      display: grid;
-      gap: 10px;
-      margin-top: 12px;
-    }
-
     .mini-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
+      display: grid;
+      gap: 6px;
       padding: 10px 0;
-      border-bottom: 1px solid rgba(255, 255, 255, .13);
+      border-bottom: 1px solid rgba(255, 255, 255, .12);
+      color: var(--muted-2);
+      font-weight: 500;
     }
 
     .mini-row:last-child {
@@ -542,143 +829,14 @@
       color: #fff;
     }
 
-    .mini-row span,
-    .mini-row small {
-      color: var(--muted-2);
-      font-weight: 500;
-    }
-
-    .trail-layout,
-    .topic-layout,
-    .backup-layout {
-      display: grid;
-      gap: var(--gap);
-    }
-
-    .module-card {
-      padding: 14px;
-      margin-bottom: var(--gap);
-      border: 1px solid rgba(255, 255, 255, .16);
-      border-radius: var(--radius);
-      background: rgba(255, 255, 255, .065);
-    }
-
-    .module-head {
-      display: grid;
-      gap: 4px;
-      margin-bottom: 12px;
-    }
-
-    .module-head h3 {
-      margin: 0;
-      font-family: "Open Sans", system-ui, sans-serif;
-      font-size: .98rem;
-    }
-
-    .module-head p {
-      margin: 0;
-      color: var(--muted-2);
-      font-weight: 500;
-    }
-
-    .topic-item {
-      width: 100%;
-      display: grid;
-      grid-template-columns: 34px 1fr auto;
-      align-items: center;
-      gap: 10px;
-      padding: 11px 10px;
-      border: 1px solid transparent;
-      border-radius: 7px;
-      background: rgba(255, 255, 255, .065);
-      text-align: left;
-      transition: border-color .18s ease, background .18s ease, transform .18s ease;
-    }
-
-    .topic-item + .topic-item {
-      margin-top: 8px;
-    }
-
-    .topic-item:hover,
-    .topic-item.active {
-      border-color: rgba(0, 184, 255, .5);
-      background: rgba(0, 184, 255, .065);
-      transform: translateX(2px);
-    }
-
-    .status-dot {
-      display: grid;
-      place-items: center;
-      width: 24px;
-      height: 24px;
-      border: 1px solid currentColor;
-      border-radius: 50%;
-      font-size: .8rem;
-      color: var(--status-color);
-    }
-
-    .status-badge {
-      padding: 4px 8px;
-      border: 1px solid currentColor;
-      border-radius: 999px;
-      color: var(--status-color);
-      background: color-mix(in srgb, var(--status-color) 10%, transparent);
-      font-size: .76rem;
-      white-space: nowrap;
-    }
-
-    .topic-hero {
-      display: grid;
-      gap: 12px;
-      padding: clamp(16px, 1.4vw, 22px);
-      border: 1px solid rgba(188, 19, 254, .32);
-      border-radius: var(--radius);
-      background:
-        linear-gradient(135deg, rgba(188, 19, 254, .14), rgba(0, 184, 255, .06)),
-        rgba(255, 255, 255, .065);
-    }
-
-    .topic-title {
-      margin: 0;
-      font-size: clamp(1.35rem, 2vw, 2.05rem);
-    }
-
-    .concept-list {
-      display: flex;
+    .mini-row .row {
+      justify-content: flex-start;
       flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 12px;
     }
 
-    .concept-list li,
-    .tag {
-      padding: 5px 8px;
-      border: 1px solid rgba(0, 255, 159, .28);
-      border-radius: 999px;
-      background: rgba(0, 255, 159, .095);
-      color: #d7fff1;
-      font-family: "Open Sans", system-ui, sans-serif;
-      font-size: .78rem;
-    }
-
-    .lesson-card,
-    .project-card {
-      padding: 14px;
-      border: 1px solid rgba(255, 255, 255, .16);
-      border-radius: var(--radius);
-      background: rgba(255, 255, 255, .065);
-    }
-
-    .lesson-card h4,
-    .project-card h3 {
-      margin: 0 0 8px;
-      font-size: 1rem;
-    }
-
-    .lesson-meta {
-      display: grid;
-      gap: 4px;
-      margin-bottom: 12px;
+    .mini-row .status-badge {
+      white-space: normal;
+      text-align: center;
     }
 
     .check-list {
@@ -691,81 +849,114 @@
       align-items: center;
       gap: 10px;
       padding: 9px 10px;
-      border: 1px solid rgba(255, 255, 255, .16);
+      border: 1px solid rgba(255, 255, 255, .13);
       border-radius: 7px;
-      background: rgba(255, 255, 255, .065);
+      background: rgba(255, 255, 255, .06);
       color: var(--muted-2);
+      font-weight: 600;
     }
 
-    .check-item input {
+    .check-item input,
+    .project-card input {
       width: 18px;
-      height: 18px;
+      min-height: 18px;
       accent-color: var(--green);
     }
 
-    .practice-box {
-      padding: 14px;
-      border: 1px solid rgba(247, 255, 0, .22);
-      border-radius: var(--radius);
-      background: rgba(247, 255, 0, .075);
+    .topic-hero {
+      display: grid;
+      gap: 12px;
+      background: linear-gradient(135deg, rgba(188, 19, 254, .13), rgba(0, 184, 255, .05)), rgba(255, 255, 255, .06);
     }
 
-    .practice-box h3 {
-      margin: 0 0 8px;
-      font-family: "Open Sans", system-ui, sans-serif;
-      font-size: .95rem;
-      color: var(--yellow);
+    .topic-title {
+      margin: 0 0 6px;
+      font-size: clamp(1.35rem, 2vw, 2.05rem);
     }
 
-    .practice-box p {
+    .concept-list,
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 0;
       margin: 0;
-      color: var(--muted-2);
-      line-height: 1.42;
-      font-weight: 500;
+      list-style: none;
     }
 
-    .notes-empty {
-      min-height: 100%;
-      display: grid;
-      place-items: center;
-      text-align: center;
-      color: var(--muted-2);
-      font-weight: 500;
+    .practice-box,
+    .terminal-box {
+      padding: 14px;
+      border: 1px solid rgba(0, 255, 159, .22);
+      border-radius: var(--radius);
+      background: rgba(0, 255, 159, .07);
+      color: #e7fff6;
+      line-height: 1.48;
     }
 
-    .notes-title {
+    .terminal-box {
+      border-color: rgba(0, 184, 255, .26);
+      background: rgba(45, 48, 88, .82);
+      font-family: "Open Sans", system-ui, sans-serif;
+    }
+
+    .focus-shell {
+      max-width: 1120px;
+      margin: 0 auto;
       display: grid;
-      gap: 6px;
+      gap: var(--gap);
+    }
+
+    .focus-panel {
+      padding: clamp(16px, 1.6vw, 26px);
+      border: 1px solid rgba(0, 255, 159, .24);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(56, 59, 106, .96), rgba(44, 47, 90, .94));
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .045), 0 0 18px rgba(0, 255, 159, .08);
+    }
+
+    .focus-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(280px, 380px);
+      gap: var(--gap);
+    }
+
+    .field-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .field-grid label {
+      color: var(--muted-2);
+      font-weight: 800;
     }
 
     .notes-title h2 {
       margin: 0;
-      font-family: "Open Sans", system-ui, sans-serif;
-      font-size: clamp(1rem, 1.35vw, 1.35rem);
+      font-size: clamp(1rem, 1.25vw, 1.35rem);
     }
 
     .notes-tabs {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 6px;
-      margin: 16px 0 12px;
+      margin: 14px 0 12px;
     }
 
     .tab-button {
       min-height: 36px;
       padding: 8px;
-      border: 1px solid rgba(255, 255, 255, .16);
+      border: 1px solid rgba(255, 255, 255, .14);
       border-radius: 6px;
       background: rgba(255, 255, 255, .065);
       color: var(--muted-2);
-      font-size: .86rem;
-      font-weight: 600;
+      font-weight: 800;
     }
 
     .tab-button.active {
-      border-color: rgba(188, 19, 254, .7);
+      border-color: rgba(188, 19, 254, .72);
       color: #fff;
-      background: rgba(188, 19, 254, .28);
+      background: rgba(188, 19, 254, .25);
     }
 
     .note-editor {
@@ -773,76 +964,26 @@
       gap: 10px;
     }
 
-    .note-editor label {
-      color: var(--muted-2);
-      font-weight: 600;
-    }
-
     .note-editor textarea {
-      width: 100%;
-      min-height: clamp(320px, 55vh, 680px);
-      resize: vertical;
-      border: 1px solid rgba(0, 255, 159, .38);
-      border-radius: var(--radius);
-      outline: 0;
-      padding: 14px;
+      min-height: clamp(260px, 48vh, 620px);
+      border-color: rgba(0, 255, 159, .28);
       background:
-        linear-gradient(rgba(0, 255, 159, .035) 1px, transparent 1px),
-        rgba(8, 19, 34, .92);
+        linear-gradient(rgba(0, 255, 159, .032) 1px, transparent 1px),
+        rgba(35, 37, 72, .92);
       background-size: 100% 30px;
-      color: #ffffff;
-      font-family: "Open Sans", system-ui, sans-serif;
-      line-height: 1.72;
-      box-shadow: inset 0 0 24px rgba(0, 255, 159, .09);
     }
 
     .save-line {
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      gap: 8px;
+      gap: 10px;
       color: var(--muted);
-      font-size: .86rem;
-      font-weight: 600;
+      font-size: .84rem;
+      font-weight: 700;
     }
 
-    .terminal-tip {
-      margin-top: 12px;
-      padding: 12px;
-      border: 1px solid rgba(0, 255, 159, .15);
-      border-radius: var(--radius);
-      background: rgba(0, 255, 159, .08);
-      color: #c9ffec;
-      font-family: "Open Sans", system-ui, sans-serif;
-      font-size: .82rem;
-      line-height: 1.55;
-    }
-
-    .backup-card {
-      padding: clamp(16px, 1.4vw, 22px);
-      display: grid;
-      gap: 14px;
-    }
-
-    .backup-card h3 {
-      margin: 0;
-      font-family: "Open Sans", system-ui, sans-serif;
-    }
-
-    .backup-card p {
-      margin: 0;
-      color: var(--muted-2);
-      line-height: 1.45;
-      font-weight: 500;
-    }
-
-    .import-input {
-      position: absolute;
-      inline-size: 1px;
-      block-size: 1px;
-      overflow: hidden;
-      clip: rect(0 0 0 0);
-      white-space: nowrap;
+    .error-card {
+      border-color: rgba(255, 0, 85, .28);
     }
 
     .project-card {
@@ -850,26 +991,21 @@
       gap: 12px;
     }
 
-    .project-title {
-      margin: 0;
-      font-size: 1rem;
-    }
-
-    .project-checklist {
-      display: grid;
-      gap: 7px;
-    }
-
-    .project-checklist label {
+    .project-card label {
       display: flex;
       align-items: center;
-      gap: 9px;
+      gap: 8px;
       color: var(--muted-2);
-      font-weight: 500;
+      font-weight: 600;
     }
 
-    .project-checklist input {
-      accent-color: var(--green);
+    .empty-state {
+      padding: 18px;
+      border: 1px dashed rgba(255, 255, 255, .16);
+      border-radius: var(--radius);
+      color: var(--muted-2);
+      text-align: center;
+      font-weight: 700;
     }
 
     .toast {
@@ -882,7 +1018,7 @@
       border: 1px solid rgba(0, 255, 159, .45);
       border-radius: var(--radius);
       background: rgba(16, 24, 46, .96);
-      box-shadow: var(--shadow-green);
+      box-shadow: 0 0 22px rgba(0, 255, 159, .18);
       color: #eafff8;
       opacity: 0;
       pointer-events: none;
@@ -895,97 +1031,318 @@
       transform: translateY(0);
     }
 
-    .section-title {
-      margin: 0 0 12px;
-      font-family: "Open Sans", system-ui, sans-serif;
-      font-size: .95rem;
+    .import-input {
+      position: absolute;
+      inline-size: 1px;
+      block-size: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
     }
 
-    .empty-state {
-      padding: 18px;
-      border: 1px dashed rgba(255, 255, 255, .16);
-      border-radius: var(--radius);
-      color: var(--muted-2);
-      text-align: center;
-      font-weight: 500;
-    }
-
-    @media (max-width: 1180px) {
+    @media (max-width: 1320px) {
       .app-shell {
-        grid-template-columns: 210px minmax(0, 1fr) 330px;
-        gap: 10px;
-        padding: 10px;
-      }
-
-      .main-panel,
-      .notes-panel,
-      .sidebar {
-        padding: 14px;
+        grid-template-columns: 230px minmax(0, 1fr) 340px;
       }
 
       .span-7,
+      .span-8,
       .span-5,
       .span-4,
-      .span-3 {
+      .span-3,
+      .span-6 {
         grid-column: span 6;
-      }
-
-      .progress-summary {
-        grid-template-columns: 120px 1fr;
       }
     }
 
-    @media (max-width: 900px) {
+    @media (max-width: 1080px) {
       body {
         overflow: auto;
       }
 
       .app-shell {
-        min-height: 100vh;
         height: auto;
+        min-height: 100vh;
+        grid-template-columns: 220px minmax(0, 1fr);
+      }
+
+      .notes-panel {
+        grid-column: 1 / -1;
+        min-height: 480px;
+      }
+
+      .dashboard-grid {
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+      }
+
+      .focus-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 900px) {
+      :root {
+        --gap: 12px;
+      }
+
+      body {
+        overflow: auto;
+      }
+
+      .app-shell {
+        height: auto;
+        min-height: 100vh;
+        grid-template-columns: minmax(0, 1fr);
+        align-items: start;
+        padding: 12px;
+      }
+
+      .sidebar {
+        position: sticky;
+        top: 0;
+        z-index: 15;
+        max-height: none;
+        overflow: hidden;
+        padding: 12px;
+        gap: 12px;
+      }
+
+      .sidebar nav {
+        margin-inline: -12px;
+        padding-inline: 12px;
+        overflow-x: auto;
+        scrollbar-width: none;
+      }
+
+      .sidebar nav::-webkit-scrollbar {
+        display: none;
+      }
+
+      .brand-mark {
+        gap: 10px;
+      }
+
+      .wine-icon {
+        width: 34px;
+        height: 42px;
+      }
+
+      .brand h1 {
+        font-size: 1.12rem;
+      }
+
+      .brand p {
+        margin: 2px 0 0;
+        font-size: .86rem;
+        line-height: 1.25;
+      }
+
+      .nav-list {
+        display: flex;
+        gap: 8px;
+        width: max-content;
+        min-width: 100%;
+      }
+
+      .nav-list li {
+        flex: 0 0 auto;
+      }
+
+      .nav-button {
+        width: auto;
+        min-width: 112px;
+        min-height: 42px;
+        grid-template-columns: 28px max-content auto;
+        padding: 7px 9px;
+        white-space: nowrap;
+      }
+
+      .nav-button:hover,
+      .nav-button.active {
+        transform: none;
+      }
+
+      .nav-icon {
+        width: 28px;
+        height: 28px;
+      }
+
+      .sidebar-footer {
+        display: none;
+      }
+
+      .main-panel,
+      .notes-panel {
+        overflow: visible;
+      }
+
+      .notes-panel {
+        grid-column: auto;
+        min-height: 0;
+      }
+
+      .topbar {
+        align-items: stretch;
+      }
+
+      .search-box {
+        width: 100%;
+        min-width: 0;
+        flex: 1 1 280px;
+      }
+
+      .track-grid,
+      .topic-grid,
+      .project-grid,
+      .lesson-grid,
+      .mini-grid {
+        grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      }
+
+      .week-review-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 780px) {
+      .app-shell {
         grid-template-columns: 1fr;
       }
 
       .sidebar,
       .main-panel,
       .notes-panel {
-        overflow: visible;
-      }
-
-      .nav-list {
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        max-height: none;
       }
 
       .dashboard-grid {
         grid-template-columns: 1fr;
       }
 
+      .span-12,
+      .span-8,
       .span-7,
+      .span-6,
       .span-5,
       .span-4,
       .span-3 {
-        grid-column: auto;
+        grid-column: span 1;
       }
 
-      .topbar {
-        flex-direction: column;
-        align-items: stretch;
+      .progress-summary {
+        grid-template-columns: 1fr;
       }
 
-      .search-box {
+      .metric-strip {
+        grid-template-columns: 1fr;
+      }
+
+      .card-head,
+      .row,
+      .action-row,
+      .notes-head,
+      .backup-actions {
+        flex-wrap: wrap;
+        align-items: flex-start;
+      }
+
+      .action-row .btn,
+      .backup-actions .btn,
+      .backup-actions label.btn {
+        flex: 1 1 150px;
+      }
+
+      .btn {
+        min-height: 42px;
+      }
+
+      .calendar-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .day-card {
         min-width: 0;
+      }
+
+      .week-actions {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .week-actions .btn {
+        padding-inline: 8px;
+        font-size: .72rem;
+      }
+
+      .note-editor textarea {
+        min-height: 260px;
       }
     }
 
     @media (max-width: 560px) {
-      .progress-summary {
+      body {
+        font-size: 15px;
+      }
+
+      .app-shell {
+        gap: 10px;
+        padding: 8px;
+      }
+
+      .sidebar,
+      .main-panel,
+      .notes-panel {
+        border-radius: 8px;
+      }
+
+      .main-panel,
+      .notes-panel {
+        padding: 12px;
+      }
+
+      .brand p {
+        display: none;
+      }
+
+      .nav-button {
+        min-width: 102px;
+        grid-template-columns: 26px max-content auto;
+        gap: 7px;
+        font-size: .86rem;
+      }
+
+      .nav-icon {
+        width: 26px;
+        height: 26px;
+      }
+
+      .breadcrumb {
+        font-size: .86rem;
+      }
+
+      .page-title h2,
+      .topic-title {
+        font-size: 1.55rem;
+        line-height: 1.15;
+      }
+
+      .progress-ring {
+        width: 96px;
+      }
+
+      .track-grid,
+      .topic-grid,
+      .project-grid,
+      .lesson-grid,
+      .mini-grid,
+      .calendar-grid,
+      .week-review-grid {
         grid-template-columns: 1fr;
-        justify-items: center;
-        text-align: center;
       }
 
       .topic-item {
-        grid-template-columns: 30px 1fr;
+        grid-template-columns: 28px minmax(0, 1fr);
       }
 
       .topic-item .status-badge {
@@ -993,54 +1350,85 @@
         justify-self: start;
       }
 
-      .backup-actions,
-      .action-row,
-      .page-title {
+      .week-actions {
+        grid-template-columns: 1fr;
+      }
+
+      .day-card textarea {
+        min-height: 68px;
+      }
+
+      .notes-tabs {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .save-line {
         flex-direction: column;
-        align-items: stretch;
+      }
+
+      .toast {
+        right: 10px;
+        bottom: 10px;
+        left: 10px;
+        width: auto;
+      }
+    }
+
+    @media (hover: none) {
+      .btn:hover,
+      .track-card:hover {
+        transform: none;
       }
     }
   </style>
 </head>
 <body>
   <div class="app-shell">
-    <aside class="sidebar" aria-label="Navegação principal">
+    <aside class="sidebar">
       <div class="brand">
         <div class="brand-mark">
           <svg class="wine-icon" viewBox="0 0 72 96" role="img" aria-label="Taça Code Wine">
             <path d="M18 6h36l8 31c2 18-9 32-26 32S8 55 10 37L18 6Z" fill="none" stroke="#ff4ed8" stroke-width="3"/>
             <path d="M27 27 18 36l9 9M45 27l9 9-9 9M39 24 32 48" fill="none" stroke="#bc13fe" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M36 69v17M22 90h28" fill="none" stroke="#ff4ed8" stroke-width="3" stroke-linecap="round"/>
+            <path d="M36 69v17M24 88h24" fill="none" stroke="#00ff9f" stroke-width="4" stroke-linecap="round"/>
           </svg>
           <div>
             <h1>Code Wine</h1>
-            <p>Sua adega de estudos em programação</p>
+            <p>Sua central de domínio em programação</p>
           </div>
         </div>
       </div>
-      <nav>
+      <nav aria-label="Navegação principal">
         <ul class="nav-list" id="navList"></ul>
       </nav>
-      <div class="sidebar-footer">
-        <strong>Ritual diário</strong><br>
-        Escolha um tópico, pratique com calma e registre o que ficou vivo no seu código.
-      </div>
+      <div class="sidebar-footer" id="sidebarFooter"></div>
     </aside>
 
     <main class="main-panel" id="mainPanel" tabindex="-1"></main>
-
-    <aside class="notes-panel" id="notesPanel" aria-label="Painel de anotações"></aside>
+    <aside class="notes-panel" id="notesPanel"></aside>
   </div>
-
-  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <div class="toast" id="toast"></div>
 
   <script>
     const CHECKLIST_ITEMS = [
-      "Assisti à aula",
-      "Fiz anotação do que entendi",
-      "Pratiquei no VS Code",
-      "Consigo explicar com minhas palavras",
-      "Apliquei em um projeto"
+      "Assisti ou li o material principal",
+      "Escrevi um resumo do que entendi",
+      "Respondi às perguntas sem olhar",
+      "Fiz a tarefa prática no VS Code",
+      "Registrei um erro ou dificuldade",
+      "Corrigi ou entendi o erro",
+      "Expliquei com minhas próprias palavras",
+      "Apliquei em um projeto real",
+      "Revisei depois de alguns dias"
+    ];
+
+    const NOTE_TABS = [
+      ["understood", "O que entendi"],
+      ["memory", "Resposta de memória"],
+      ["doubts", "Dúvidas"],
+      ["practice", "Aplicação prática"],
+      ["errors", "Erros e dificuldades"],
+      ["explanation", "Explicação com minhas palavras"]
     ];
 
     const resources = {
@@ -1057,8 +1445,32 @@
       return { title, source, type, url, estimatedTime };
     }
 
-    function topic(id, title, objective, description, mainConcepts, lessons, projectTask, reviewHint) {
-      return { id, title, objective, description, mainConcepts, lessons, projectTask, reviewHint };
+    function topic(id, title, third, fourth, concepts, lessons, projectTask, reviewHint, questions) {
+      if (Array.isArray(questions)) {
+        return { id, title, description: third, objective: fourth, concepts, mainConcepts: concepts, lessons, projectTask, reviewHint, questions };
+      }
+      return {
+        id,
+        title,
+        objective: third,
+        description: fourth,
+        concepts,
+        mainConcepts: concepts,
+        lessons,
+        projectTask,
+        reviewHint,
+        questions: createRecallQuestions(title, concepts, projectTask)
+      };
+    }
+
+    function createRecallQuestions(title, concepts = [], projectTask = '') {
+      const mainConcept = concepts[0] || title;
+      const secondConcept = concepts[1] || 'esse assunto';
+      return [
+        `O que ? ${title} e para que serve na pr?tica?`,
+        `Como ${mainConcept} se relaciona com ${secondConcept}?`,
+        `Como voc? aplicaria isso no VS Code hoje? ${projectTask}`
+      ];
     }
 
     const curriculum = [
@@ -1189,20 +1601,182 @@
     ];
 
     const practicalProjects = [
-      { id: "project-personal-page", topicId: "proj-pagina-pessoal", title: "Página pessoal de desenvolvedor", description: "Uma apresentação objetiva com identidade, habilidades, links e contato.", subjects: ["HTML", "CSS", "Git"], checklist: ["Estrutura semântica", "Seções principais", "README inicial"] },
-      { id: "project-hazelink", topicId: "proj-hazelink", title: "Landing page Hazelink", description: "Uma página de conversão para apresentar oferta, benefício e chamada de ação.", subjects: ["CSS Grid", "Responsividade", "Copy"], checklist: ["Hero claro", "Cards de benefício", "Versão notebook"] },
-      { id: "project-barber", topicId: "proj-barbearia", title: "Landing page de barbearia", description: "Uma página local com serviços, endereço, horários e agendamento.", subjects: ["HTML", "CSS", "Layout"], checklist: ["Serviços", "Contato", "Chamada para agenda"] },
-      { id: "project-menu", topicId: "proj-cardapio", title: "Cardápio digital", description: "Uma vitrine simples para organizar produtos, preços e categorias.", subjects: ["Grid", "Cards", "Design visual"], checklist: ["Categorias", "Itens e preços", "Destaques"] },
-      { id: "project-schedule", topicId: "proj-agenda-manicure", title: "Agenda simples para manicure", description: "Um app local com cadastro de horários e persistência no navegador.", subjects: ["JavaScript", "Formulários", "localStorage"], checklist: ["Cadastrar", "Salvar", "Listar agenda"] },
-      { id: "project-portfolio", topicId: "proj-portfolio", title: "Portfólio pessoal", description: "Uma vitrine dos projetos concluídos e da evolução nos estudos.", subjects: ["Projetos", "Deploy", "GitHub"], checklist: ["Página inicial", "Projetos", "Contato"] }
+      {
+        id: "project-personal",
+        title: "Página pessoal de desenvolvedor",
+        description: "Primeira presença digital com estrutura semântica, apresentação e contato.",
+        objective: "Transformar fundamentos de HTML e CSS em uma página real.",
+        subjects: ["HTML", "CSS", "Semântica", "Responsividade"],
+        topicIds: ["html-estrutura-basica", "html-semantico", "css-box-model", "proj-pagina-pessoal"],
+        checklist: ["Estrutura semântica", "Seção sobre mim", "Links e contato", "Responsivo"]
+      },
+      {
+        id: "project-hazelink",
+        title: "Landing page Hazelink",
+        description: "Página de conversão com hero, benefícios, prova visual e chamada de ação.",
+        objective: "Treinar composição, clareza de oferta e responsividade.",
+        subjects: ["HTML", "CSS", "Layout", "CTA"],
+        topicIds: ["html-semantico", "css-flexbox", "css-media-queries", "proj-hazelink"],
+        checklist: ["Hero claro", "Benefícios", "CTA visível", "Responsivo"]
+      },
+      {
+        id: "project-barber",
+        title: "Landing page de barbearia",
+        description: "Página local com serviços, horários, localização e agendamento.",
+        objective: "Praticar layout comercial simples e legível.",
+        subjects: ["Cards", "Seções", "Responsividade"],
+        topicIds: ["css-flexbox", "css-grid", "proj-barbearia"],
+        checklist: ["Serviços", "Horários", "Localização", "Agendamento"]
+      },
+      {
+        id: "project-menu",
+        title: "Cardápio digital",
+        description: "Interface com categorias, produtos, preços e destaques.",
+        objective: "Usar Grid e cards para organizar informação escaneável.",
+        subjects: ["CSS Grid", "Cards", "Interface"],
+        topicIds: ["css-grid", "css-box-model", "proj-cardapio"],
+        checklist: ["Categorias", "Produtos", "Preços", "Destaques"]
+      },
+      {
+        id: "project-schedule",
+        title: "Agenda simples para manicure",
+        description: "App local com cadastro de horários e persistência no navegador.",
+        objective: "Unir formulário, DOM, eventos e localStorage.",
+        subjects: ["JavaScript", "Formulários", "localStorage"],
+        topicIds: ["html-formularios", "js-dom", "js-eventos", "js-localstorage", "proj-agenda-manicure"],
+        checklist: ["Cadastrar", "Salvar", "Listar", "Remover"]
+      },
+      {
+        id: "project-portfolio",
+        title: "Portfólio pessoal",
+        description: "Vitrine dos projetos concluídos e da evolução nos estudos.",
+        objective: "Conectar projetos, README, publicação e apresentação.",
+        subjects: ["Projetos", "Git", "Deploy"],
+        topicIds: ["git-readme", "git-publicar-projeto", "proj-portfolio"],
+        checklist: ["Página inicial", "Projetos", "README", "Deploy"]
+      }
     ];
 
     const defaultState = {
       progress: {},
       notes: {},
-      lastTopicId: null,
+      activeRecall: {},
+      errors: {},
+      reviews: {},
+      weeklyPlan: {},
       projectProgress: {},
-      settings: { theme: "dark" }
+      lastTopicId: "html-estrutura-basica",
+      studyLog: {},
+      settings: {
+        activeNoteTab: "understood",
+        selectedWeekStart: null,
+        firebase: {
+          enabled: false,
+          configText: "",
+          workspaceId: "code-wine-main",
+          collectionName: "codeWineWorkspaces",
+          status: "Salvando apenas neste navegador."
+        }
+      }
+    };
+
+    const FIREBASE_SDK_VERSION = "12.15.0";
+    const FIREBASE_CONFIG = {
+      apiKey: "",
+      authDomain: "",
+      projectId: "",
+      storageBucket: "",
+      messagingSenderId: "",
+      appId: ""
+    };
+
+    let applyingRemoteState = false;
+    let cloudSaveTimer;
+
+    const cloudStore = {
+      app: null,
+      db: null,
+      docRef: null,
+      unsubscribe: null,
+      ready: false,
+      async init({ silent = false } = {}) {
+        const firebase = getFirebaseSettings();
+        if (!firebase.enabled) {
+          this.setStatus("Firebase desativado. Salvando apenas neste navegador.");
+          return false;
+        }
+        if (!hasFirebaseConfig(firebase.config)) {
+          this.setStatus("Cole o firebaseConfig para ativar a sincronização.");
+          return false;
+        }
+        try {
+          const [{ initializeApp, getApps }, firestoreModule] = await Promise.all([
+            import(`https://www.gstatic.com/firebasejs/${FIREBASE_SDK_VERSION}/firebase-app.js`),
+            import(`https://www.gstatic.com/firebasejs/${FIREBASE_SDK_VERSION}/firebase-firestore.js`)
+          ]);
+          const { getFirestore, doc, getDoc, setDoc, onSnapshot, serverTimestamp } = firestoreModule;
+          this.serverTimestamp = serverTimestamp;
+          this.setDoc = setDoc;
+          if (this.unsubscribe) this.unsubscribe();
+          this.app = getApps().find(app => app.name === "code-wine") || initializeApp(firebase.config, "code-wine");
+          this.db = getFirestore(this.app);
+          this.docRef = doc(this.db, firebase.collectionName, firebase.workspaceId);
+          const snapshot = await getDoc(this.docRef);
+          if (snapshot.exists() && snapshot.data().state) {
+            applyingRemoteState = true;
+            state = normalizeState(snapshot.data().state);
+            localStorage.setItem(dataStore.key, JSON.stringify(state));
+            applyingRemoteState = false;
+            if (!silent) showToast("Dados carregados do Firebase.");
+          } else {
+            await this.pushNow();
+          }
+          this.unsubscribe = onSnapshot(this.docRef, remoteSnapshot => {
+            if (!remoteSnapshot.exists() || applyingRemoteState) return;
+            const remote = remoteSnapshot.data().state;
+            if (!remote) return;
+            applyingRemoteState = true;
+            state = normalizeState(remote);
+            localStorage.setItem(dataStore.key, JSON.stringify(state));
+            applyingRemoteState = false;
+            render();
+          });
+          this.ready = true;
+          this.setStatus(`Sincronizado com Firestore em ${firebase.collectionName}/${firebase.workspaceId}.`);
+          return true;
+        } catch (error) {
+          this.ready = false;
+          this.setStatus(`Erro ao conectar Firebase: ${error.message || error}`);
+          return false;
+        }
+      },
+      queueSave() {
+        if (applyingRemoteState || !this.ready) return;
+        clearTimeout(cloudSaveTimer);
+        cloudSaveTimer = setTimeout(() => this.pushNow(), 900);
+      },
+      async pushNow() {
+        const firebase = getFirebaseSettings();
+        if (!this.docRef || !this.setDoc || !firebase.enabled) return false;
+        try {
+          await this.setDoc(this.docRef, {
+            state: normalizeState(state),
+            schemaVersion: 2,
+            updatedAt: this.serverTimestamp ? this.serverTimestamp() : nowISO()
+          }, { merge: true });
+          this.setStatus(`Último envio ao Firebase: ${new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}.`);
+          return true;
+        } catch (error) {
+          this.setStatus(`Erro ao salvar no Firebase: ${error.message || error}`);
+          return false;
+        }
+      },
+      setStatus(message) {
+        state.settings.firebase = { ...state.settings.firebase, status: message };
+        localStorage.setItem(dataStore.key, JSON.stringify(state));
+        const status = document.getElementById("firebaseStatus");
+        if (status) status.textContent = message;
+      }
     };
 
     const dataStore = {
@@ -1210,30 +1784,90 @@
       getState() {
         try {
           const saved = localStorage.getItem(this.key);
-          if (!saved) return structuredClone(defaultState);
-          return { ...structuredClone(defaultState), ...JSON.parse(saved) };
+          const parsed = saved ? JSON.parse(saved) : {};
+          return normalizeState(parsed);
         } catch {
           return structuredClone(defaultState);
         }
       },
-      saveState(state) {
+      saveState(nextState) {
+        state = normalizeState(nextState);
         localStorage.setItem(this.key, JSON.stringify(state));
+        cloudStore.queueSave();
+      },
+      touch(action) {
+        const day = todayISO();
+        state.studyLog[day] = state.studyLog[day] || { checklist: 0, note: 0, review: 0, project: 0, error: 0 };
+        state.studyLog[day][action] = (state.studyLog[day][action] || 0) + 1;
       },
       updateTopicProgress(topicId, checklist) {
-        state.progress[topicId] = state.progress[topicId] || {};
-        state.progress[topicId].checklist = checklist;
-        if (checklist.every(Boolean) && !state.progress[topicId].completedAt) {
-          state.progress[topicId].completedAt = new Date().toISOString();
-        }
-        if (!checklist.every(Boolean)) {
-          delete state.progress[topicId].completedAt;
-        }
+        const progress = ensureProgress(topicId);
+        progress.checklist = checklist;
+        progress.masteryLevel = getMasteryLevel(topicId, checklist);
+        progress.status = getStatusFromLevel(progress.masteryLevel);
+        progress.updatedAt = nowISO();
+        if (progress.masteryLevel >= 3 && !progress.firstMasteredAt) progress.firstMasteredAt = nowISO();
+        if (progress.masteryLevel >= 5 && !progress.completedAt) progress.completedAt = nowISO();
+        if (progress.masteryLevel >= 3 && !progress.nextReviewAt) progress.nextReviewAt = addDaysISO(1);
+        state.lastTopicId = topicId;
+        this.touch("checklist");
         this.saveState(state);
       },
       updateNote(topicId, field, value) {
-        state.notes[topicId] = state.notes[topicId] || {};
-        state.notes[topicId][field] = value;
-        state.notes[topicId].updatedAt = new Date().toISOString();
+        const notes = ensureNotes(topicId);
+        notes[field] = value;
+        notes.updatedAt = nowISO();
+        if (field === "memory") state.activeRecall[topicId] = { answer: value, updatedAt: nowISO() };
+        if (field === "errors") ensureError(topicId).difficulty = value;
+        state.lastTopicId = topicId;
+        this.touch(field === "errors" ? "error" : "note");
+        this.saveState(state);
+      },
+      updateError(topicId, field, value) {
+        const error = ensureError(topicId);
+        error[field] = value;
+        error.updatedAt = nowISO();
+        ensureNotes(topicId).errors = summarizeError(error);
+        state.lastTopicId = topicId;
+        this.touch("error");
+        this.saveState(state);
+      },
+      updateWeekly(field, value, weekKey = getSelectedWeekKey()) {
+        const plan = ensureWeekPlan(weekKey);
+        plan[field] = value;
+        plan.updatedAt = nowISO();
+        this.touch("note");
+        this.saveState(state);
+      },
+      updateWeeklyDay(date, field, value, weekKey = getSelectedWeekKey()) {
+        const plan = ensureWeekPlan(weekKey);
+        plan.days[date] = plan.days[date] || {};
+        plan.days[date][field] = value;
+        plan.days[date].updatedAt = nowISO();
+        plan.updatedAt = nowISO();
+        this.touch("note");
+        this.saveState(state);
+      },
+      setSelectedWeek(startISO) {
+        state.settings.selectedWeekStart = startISO;
+        this.saveState(state);
+      },
+      updateProject(projectId, checklist) {
+        state.projectProgress[projectId] = { checklist, updatedAt: nowISO() };
+        this.touch("project");
+        this.saveState(state);
+      },
+      markReviewed(topicId) {
+        const progress = ensureProgress(topicId);
+        progress.lastReviewedAt = todayISO();
+        progress.reviewCount = (progress.reviewCount || 0) + 1;
+        const nextInterval = progress.reviewCount === 1 ? 3 : progress.reviewCount === 2 ? 7 : 15;
+        progress.nextReviewAt = addDaysISO(nextInterval);
+        progress.checklist[8] = true;
+        progress.masteryLevel = Math.max(6, getMasteryLevel(topicId, progress.checklist));
+        progress.status = "dominado";
+        state.reviews[topicId] = { lastReviewedAt: todayISO(), nextReviewAt: progress.nextReviewAt, count: progress.reviewCount };
+        this.touch("review");
         this.saveState(state);
       },
       setLastTopic(topicId) {
@@ -1241,448 +1875,220 @@
         this.saveState(state);
       },
       exportData() {
-        return JSON.stringify({
-          progress: state.progress,
-          notes: state.notes,
-          lastTopicId: state.lastTopicId,
-          projectProgress: state.projectProgress,
-          settings: state.settings
-        }, null, 2);
+        return JSON.stringify(normalizeState(state), null, 2);
       },
       importData(data) {
-        state = {
-          ...structuredClone(defaultState),
-          progress: data.progress || {},
-          notes: data.notes || {},
-          lastTopicId: data.lastTopicId || null,
-          projectProgress: data.projectProgress || {},
-          settings: data.settings || { theme: "dark" }
-        };
-        this.saveState(state);
+        if (!data || typeof data !== "object") throw new Error("Arquivo inválido");
+        this.saveState(normalizeState(data));
+      },
+      clear() {
+        this.saveState(structuredClone(defaultState));
       }
     };
 
     let state = dataStore.getState();
     let appView = "dashboard";
     let selectedTrailId = "html";
-    let selectedTopicId = state.lastTopicId || getAllTopics()[0].topic.id;
-    let activeNoteTab = "understood";
-    let noteTimer = null;
+    let selectedTopicId = state.lastTopicId || "html-estrutura";
+    let activeNoteTab = state.settings.activeNoteTab || "understood";
+    let noteTimer;
+    let toastTimer;
 
     const mainPanel = document.getElementById("mainPanel");
     const notesPanel = document.getElementById("notesPanel");
     const navList = document.getElementById("navList");
+    const sidebarFooter = document.getElementById("sidebarFooter");
     const toast = document.getElementById("toast");
+
+    const navItems = [
+      { id: "dashboard", label: "Dashboard", icon: "⌂", type: "view" },
+      ...curriculum.map(trail => ({ id: trail.id, label: trail.title, icon: trail.icon, type: "trail" })),
+      { id: "focus", label: "Modo Foco", icon: "◎", type: "view" },
+      { id: "revisions", label: "Revisões", icon: "↻", type: "view" },
+      { id: "errors", label: "Laboratório", icon: "!", type: "view" },
+      { id: "week", label: "Semana", icon: "7", type: "view" },
+      { id: "projects", label: "Projetos", icon: "◆", type: "view" },
+      { id: "backup", label: "Backup", icon: "⇩", type: "view" }
+    ];
+
+    function normalizeState(input) {
+      const base = structuredClone(defaultState);
+      const merged = { ...base, ...input };
+      merged.progress = { ...base.progress, ...(input.progress || {}) };
+      merged.notes = { ...base.notes, ...(input.notes || {}) };
+      merged.activeRecall = { ...base.activeRecall, ...(input.activeRecall || {}) };
+      merged.errors = { ...base.errors, ...(input.errors || {}) };
+      merged.reviews = { ...base.reviews, ...(input.reviews || {}) };
+      merged.weeklyPlan = { ...base.weeklyPlan, ...(input.weeklyPlan || {}) };
+      merged.projectProgress = { ...base.projectProgress, ...(input.projectProgress || {}) };
+      merged.studyLog = { ...base.studyLog, ...(input.studyLog || {}) };
+      merged.settings = { ...base.settings, ...(input.settings || {}) };
+      merged.settings.firebase = { ...base.settings.firebase, ...(input.settings?.firebase || {}) };
+
+      getAllTopics().forEach(({ topic: topicItem }) => {
+        const oldProgress = merged.progress[topicItem.id] || {};
+        const oldChecklist = oldProgress.checklist || [];
+        const checklist = CHECKLIST_ITEMS.map((_, index) => Boolean(oldChecklist[index]));
+        const masteryLevel = oldProgress.masteryLevel ?? getMasteryLevel(topicItem.id, checklist);
+        merged.progress[topicItem.id] = {
+          checklist,
+          masteryLevel,
+          status: oldProgress.status || getStatusFromLevel(masteryLevel),
+          completedAt: oldProgress.completedAt || null,
+          firstMasteredAt: oldProgress.firstMasteredAt || null,
+          lastReviewedAt: oldProgress.lastReviewedAt || null,
+          nextReviewAt: oldProgress.nextReviewAt || null,
+          reviewCount: oldProgress.reviewCount || 0,
+          updatedAt: oldProgress.updatedAt || null
+        };
+        merged.notes[topicItem.id] = {
+          understood: "",
+          memory: merged.activeRecall[topicItem.id]?.answer || "",
+          doubts: "",
+          practice: "",
+          errors: "",
+          explanation: "",
+          updatedAt: null,
+          ...(merged.notes[topicItem.id] || {})
+        };
+        merged.activeRecall[topicItem.id] = {
+          answer: merged.notes[topicItem.id].memory || merged.activeRecall[topicItem.id]?.answer || "",
+          updatedAt: merged.activeRecall[topicItem.id]?.updatedAt || merged.notes[topicItem.id].updatedAt || null
+        };
+        merged.errors[topicItem.id] = {
+          tried: "",
+          happened: "",
+          resolved: "",
+          nextTime: "",
+          difficulty: merged.notes[topicItem.id].errors || "",
+          updatedAt: null,
+          ...(merged.errors[topicItem.id] || {})
+        };
+      });
+      return merged;
+    }
 
     function getAllTopics() {
       return curriculum.flatMap(trail => trail.modules.flatMap(module => module.topics.map(topicItem => ({ trail, module, topic: topicItem }))));
-    }
-
-    function findTopic(topicId) {
-      return getAllTopics().find(item => item.topic.id === topicId) || getAllTopics()[0];
     }
 
     function findTrail(trailId) {
       return curriculum.find(trail => trail.id === trailId) || curriculum[0];
     }
 
-    function getChecklist(topicId) {
-      const saved = state.progress[topicId]?.checklist;
-      return CHECKLIST_ITEMS.map((_, index) => Boolean(saved?.[index]));
+    function findTopic(topicId) {
+      return getAllTopics().find(item => item.topic.id === topicId) || getAllTopics()[0];
+    }
+
+    function ensureProgress(topicId) {
+      if (!state.progress[topicId]) state.progress[topicId] = { checklist: CHECKLIST_ITEMS.map(() => false), masteryLevel: 0, status: "não iniciado" };
+      state.progress[topicId].checklist = CHECKLIST_ITEMS.map((_, index) => Boolean(state.progress[topicId].checklist?.[index]));
+      return state.progress[topicId];
+    }
+
+    function ensureNotes(topicId) {
+      if (!state.notes[topicId]) state.notes[topicId] = { understood: "", memory: "", doubts: "", practice: "", errors: "", explanation: "", updatedAt: null };
+      return state.notes[topicId];
+    }
+
+    function ensureError(topicId) {
+      if (!state.errors[topicId]) state.errors[topicId] = { tried: "", happened: "", resolved: "", nextTime: "", difficulty: "", updatedAt: null };
+      return state.errors[topicId];
+    }
+
+    function getMasteryLevel(topicId, checklist = ensureProgress(topicId).checklist) {
+      let level = 0;
+      if (checklist[0]) level = Math.max(level, 1);
+      if (checklist[1]) level = Math.max(level, 2);
+      if (checklist[2]) level = Math.max(level, 3);
+      if (checklist[3] || checklist[4] || checklist[5] || checklist[6]) level = Math.max(level, 4);
+      if (checklist[7]) level = Math.max(level, 5);
+      if (checklist[8]) level = Math.max(level, 6);
+      return level;
+    }
+
+    function getStatusFromLevel(level) {
+      if (level <= 0) return "não iniciado";
+      if (level >= 6) return "dominado";
+      return "estudando";
+    }
+
+    function getLevelMeta(level) {
+      const metas = [
+        { label: "Nível 0, não iniciado", color: "#8b8ca1", icon: "0" },
+        { label: "Nível 1, vi o conteúdo", color: "var(--blue)", icon: "1" },
+        { label: "Nível 2, escrevi o que entendi", color: "var(--blue)", icon: "2" },
+        { label: "Nível 3, respondi de memória", color: "var(--purple)", icon: "3" },
+        { label: "Nível 4, pratiquei no VS Code", color: "var(--purple)", icon: "4" },
+        { label: "Nível 5, apliquei em projeto", color: "var(--magenta)", icon: "5" },
+        { label: "Nível 6, dominado e revisado", color: "var(--green)", icon: "6" }
+      ];
+      return metas[level] || metas[0];
     }
 
     function getTopicStatus(topicId) {
-      const checklist = getChecklist(topicId);
-      if (checklist.every(Boolean)) return { label: "Concluído", color: "var(--green)", icon: "✓" };
-      if (checklist.some(Boolean)) return { label: "Estudando", color: "var(--blue)", icon: "›" };
-      return { label: "Não iniciado", color: "#6f7088", icon: "" };
+      const progress = ensureProgress(topicId);
+      const level = getMasteryLevel(topicId, progress.checklist);
+      progress.masteryLevel = level;
+      progress.status = getStatusFromLevel(level);
+      const meta = getLevelMeta(level);
+      return { ...meta, level, status: progress.status };
     }
 
     function getTrailProgress(trailId) {
       const trail = findTrail(trailId);
       const topics = trail.modules.flatMap(module => module.topics);
-      const done = topics.filter(topicItem => getChecklist(topicItem.id).every(Boolean)).length;
-      return { done, total: topics.length, percent: topics.length ? Math.round((done / topics.length) * 100) : 0 };
+      const totalPoints = topics.length * 6;
+      const points = topics.reduce((sum, topicItem) => sum + getTopicStatus(topicItem.id).level, 0);
+      const dominated = topics.filter(topicItem => getTopicStatus(topicItem.id).level >= 6).length;
+      return { total: topics.length, points, dominated, percent: totalPoints ? Math.round((points / totalPoints) * 100) : 0 };
     }
 
     function getOverallProgress() {
       const topics = getAllTopics();
-      const done = topics.filter(item => getChecklist(item.topic.id).every(Boolean)).length;
-      const started = topics.filter(item => getChecklist(item.topic.id).some(Boolean)).length;
-      return { done, started, total: topics.length, percent: topics.length ? Math.round((done / topics.length) * 100) : 0 };
+      const totalPoints = topics.length * 6;
+      const points = topics.reduce((sum, item) => sum + getTopicStatus(item.topic.id).level, 0);
+      const started = topics.filter(item => getTopicStatus(item.topic.id).level > 0).length;
+      const dominated = topics.filter(item => getTopicStatus(item.topic.id).level >= 6).length;
+      return { total: topics.length, points, started, dominated, percent: totalPoints ? Math.round((points / totalPoints) * 100) : 0 };
     }
 
-    function getNextTopic() {
-      return getAllTopics().find(item => !getChecklist(item.topic.id).every(Boolean)) || getAllTopics()[0];
-    }
-
-    function getLastTopic() {
-      return findTopic(state.lastTopicId || getAllTopics()[0].topic.id);
-    }
-
-    function formatDate(iso) {
-      if (!iso) return "Ainda sem registro";
-      return new Intl.DateTimeFormat("pt-BR", { dateStyle: "short", timeStyle: "short" }).format(new Date(iso));
-    }
-
-    function escapeHTML(value) {
-      return String(value ?? "").replace(/[&<>"']/g, char => ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#039;"
-      }[char]));
-    }
-
-    function statusBadge(topicId) {
-      const status = getTopicStatus(topicId);
-      return `<span class="status-badge" style="--status-color: ${status.color}">${status.label}</span>`;
-    }
-
-    function showToast(message) {
-      toast.textContent = message;
-      toast.classList.add("show");
-      clearTimeout(showToast.timer);
-      showToast.timer = setTimeout(() => toast.classList.remove("show"), 2600);
-    }
-
-    function render() {
-      renderNav();
-      if (appView === "dashboard") renderDashboard();
-      if (appView === "trail") renderTrail(selectedTrailId);
-      if (appView === "topic") renderTopic(selectedTopicId);
-      if (appView === "revisions") renderRevisions();
-      if (appView === "projects") renderProjects();
-      if (appView === "backup") renderBackup();
-      renderNotes();
-      bindMainEvents();
-      bindNotesEvents();
-      mainPanel.focus({ preventScroll: true });
-    }
-
-    function navItems() {
-      return [
-        { id: "dashboard", title: "Dashboard", icon: "⌂", type: "view" },
-        ...curriculum.filter(trail => trail.id !== "projects").map(trail => ({ id: trail.id, title: trail.title, icon: trail.icon, type: "trail" })),
-        { id: "projects", title: "Projetos", icon: "▣", type: "projects" },
-        { id: "revisions", title: "Revisões", icon: "↻", type: "view" },
-        { id: "backup", title: "Backup", icon: "⇩", type: "view" }
-      ];
-    }
-
-    function renderNav() {
-      navList.innerHTML = navItems().map(item => {
-        const progress = curriculum.some(trail => trail.id === item.id) ? `${getTrailProgress(item.id).percent}%` : "";
-        const active = (item.type === "trail" && appView === "trail" && selectedTrailId === item.id) || appView === item.id || (item.type === "projects" && appView === "projects");
-        return `<li>
-          <button class="nav-button ${active ? "active" : ""}" data-nav="${item.id}" data-type="${item.type}">
-            <span class="nav-icon">${escapeHTML(item.icon)}</span>
-            <span>${escapeHTML(item.title)}</span>
-            <span class="nav-percent">${progress}</span>
-          </button>
-        </li>`;
-      }).join("");
-
-      navList.querySelectorAll("[data-nav]").forEach(button => {
-        button.addEventListener("click", () => {
-          const id = button.dataset.nav;
-          const type = button.dataset.type;
-          if (type === "trail") {
-            appView = "trail";
-            selectedTrailId = id;
-          } else if (type === "projects") {
-            appView = "projects";
-          } else {
-            appView = id;
-          }
-          render();
-        });
+    function getReviewGroups() {
+      const today = todayISO();
+      const items = getAllTopics().filter(item => {
+        const progress = ensureProgress(item.topic.id);
+        return progress.masteryLevel >= 3 || progress.nextReviewAt || progress.lastReviewedAt;
+      }).map(item => {
+        const progress = ensureProgress(item.topic.id);
+        const baseDate = progress.firstMasteredAt?.slice(0, 10) || progress.completedAt?.slice(0, 10) || progress.updatedAt?.slice(0, 10) || today;
+        const next = progress.nextReviewAt || addDaysISO(1, baseDate);
+        return { ...item, nextReviewAt: next, lastReviewedAt: progress.lastReviewedAt };
       });
-    }
-
-    function renderTopbar(label) {
-      return `<div class="topbar">
-        <div class="breadcrumb">${label}</div>
-        <label class="search-box">
-          <span>⌕</span>
-          <input id="topicSearch" type="search" placeholder="Buscar assunto" autocomplete="off">
-        </label>
-      </div>`;
-    }
-
-    function renderDashboard() {
-      const overall = getOverallProgress();
-      const last = getLastTopic();
-      const next = getNextTopic();
-      const completed = getCompletedTopics().slice(0, 3);
-      mainPanel.innerHTML = `${renderTopbar("Dashboard")}
-        <section class="dashboard-grid">
-          <article class="card card-pad span-7">
-            <h2 class="card-title">Progresso geral</h2>
-            <div class="progress-summary">
-              <div class="progress-ring" style="--value: ${overall.percent * 3.6}deg"><span class="metric-value">${overall.percent}%</span></div>
-              <div class="metric-list">
-                <span>Assuntos concluídos <strong>${overall.done} / ${overall.total}</strong></span>
-                <span>Assuntos iniciados <strong>${overall.started}</strong></span>
-                <span>Trilhas ativas <strong>${curriculum.length}</strong></span>
-              </div>
-            </div>
-          </article>
-          <article class="card card-pad span-5 continue-card">
-            <h2 class="card-title">Continuar de onde parou</h2>
-            <div class="focus-box">
-              <h3>${escapeHTML(last.trail.title)}</h3>
-              <p>${escapeHTML(last.topic.title)}</p>
-              <p>${nextAction(last.topic.id)}</p>
-            </div>
-            <button class="btn" data-open-topic="${last.topic.id}">Continuar estudo ›</button>
-          </article>
-          <article class="card card-pad span-7">
-            <h2 class="card-title">Progresso por trilha</h2>
-            <div class="track-grid" style="margin-top:12px">${curriculum.map(renderTrackCard).join("")}</div>
-          </article>
-          <article class="card card-pad span-5">
-            <h2 class="card-title">Estudo de hoje</h2>
-            <div class="today-list">
-              <div class="mini-row"><span>Trilha</span><strong>${escapeHTML(next.trail.title)}</strong></div>
-              <div class="mini-row"><span>Tópico</span><strong>${escapeHTML(next.topic.title)}</strong></div>
-              <div class="mini-row"><span>Ação</span><small>${nextAction(next.topic.id)}</small></div>
-            </div>
-            <div style="margin-top:14px"><button class="btn secondary" data-open-topic="${next.topic.id}">Começar agora</button></div>
-          </article>
-          <article class="card card-pad span-4">
-            <h2 class="card-title">Próximas revisões</h2>
-            <div class="small-stack" style="margin-top:12px">${completed.length ? completed.map(renderMiniRevision).join("") : `<div class="empty-state">Conclua um tópico para acender a primeira revisão.</div>`}</div>
-          </article>
-          <article class="card card-pad span-4">
-            <h2 class="card-title">Projetos em andamento</h2>
-            <div class="small-stack" style="margin-top:12px">${practicalProjects.slice(0, 3).map(project => renderMiniProject(project)).join("")}</div>
-          </article>
-          <article class="card card-pad span-4">
-            <h2 class="card-title">Ritmo da adega</h2>
-            <div class="terminal-tip">Cada tópico concluído vira uma garrafa guardada na sua própria jornada de programação. O objetivo é estudar com constância, sem pressa vazia.</div>
-          </article>
-        </section>`;
-    }
-
-    function renderTrackCard(trail) {
-      const progress = getTrailProgress(trail.id);
-      return `<div class="track-card" style="--track-color: ${trail.color}">
-        <button data-open-trail="${trail.id}">
-          <div class="track-head">
-            <span class="track-icon">${escapeHTML(trail.icon)}</span>
-            <span>${progress.percent}%</span>
-          </div>
-          <h3 class="track-title">${escapeHTML(trail.title)}</h3>
-          <p class="track-desc">${escapeHTML(trail.description)}</p>
-          <div class="progress-bar"><div class="progress-fill" style="--fill-color:${trail.color}; width:${progress.percent}%"></div></div>
-        </button>
-      </div>`;
-    }
-
-    function renderMiniRevision(item) {
-      return `<div class="mini-row">
-        <div><strong>${escapeHTML(item.topic.title)}</strong><br><small>${escapeHTML(item.trail.title)}, concluído em ${formatDate(state.progress[item.topic.id].completedAt)}</small></div>
-        <span>3, 7 e 15 dias</span>
-      </div>`;
-    }
-
-    function renderMiniProject(project) {
-      const percent = getProjectPercent(project.id);
-      return `<div class="mini-row">
-        <div><strong>${escapeHTML(project.title)}</strong><br><small>${percent}% do checklist</small></div>
-        <div class="progress-bar" style="width:90px"><div class="progress-fill" style="width:${percent}%"></div></div>
-      </div>`;
-    }
-
-    function renderTrail(trailId) {
-      const trail = findTrail(trailId);
-      const progress = getTrailProgress(trail.id);
-      mainPanel.innerHTML = `${renderTopbar(`Trilha > ${escapeHTML(trail.title)}`)}
-        <section class="trail-layout">
-          <div class="page-title">
-            <div>
-              <h2>${escapeHTML(trail.title)}</h2>
-              <p>${escapeHTML(trail.description)}</p>
-            </div>
-            <span class="status-badge" style="--status-color: ${trail.color}">${progress.done} de ${progress.total} concluídos</span>
-          </div>
-          <article class="card card-pad">
-            <h3 class="section-title">Progresso da trilha</h3>
-            <div class="progress-bar"><div class="progress-fill" style="--fill-color:${trail.color}; width:${progress.percent}%"></div></div>
-          </article>
-          <div>${trail.modules.map(module => renderModule(module)).join("")}</div>
-        </section>`;
-    }
-
-    function renderModule(module) {
-      return `<article class="module-card">
-        <div class="module-head">
-          <h3>${escapeHTML(module.title)}</h3>
-          <p>${escapeHTML(module.description)}</p>
-        </div>
-        <div class="module-list">${module.topics.map(topicItem => {
-          const status = getTopicStatus(topicItem.id);
-          return `<button class="topic-item ${selectedTopicId === topicItem.id ? "active" : ""}" data-open-topic="${topicItem.id}">
-            <span class="status-dot" style="--status-color:${status.color}">${status.icon}</span>
-            <span>${escapeHTML(topicItem.title)}</span>
-            ${statusBadge(topicItem.id)}
-          </button>`;
-        }).join("")}</div>
-      </article>`;
-    }
-
-    function renderTopic(topicId) {
-      const item = findTopic(topicId);
-      const topicItem = item.topic;
-      const checklist = getChecklist(topicId);
-      const status = getTopicStatus(topicId);
-      mainPanel.innerHTML = `${renderTopbar(`${escapeHTML(item.trail.title)} > ${escapeHTML(item.module.title)}`)}
-        <section class="topic-layout">
-          <article class="topic-hero">
-            <div class="topic-head">
-              <div>
-                <h2 class="topic-title">${escapeHTML(topicItem.title)}</h2>
-                <p class="topic-desc">${escapeHTML(topicItem.description)}</p>
-              </div>
-              <span class="status-badge" style="--status-color:${status.color}">${status.label}</span>
-            </div>
-            <div><strong>Objetivo:</strong> ${escapeHTML(topicItem.objective)}</div>
-            <ul class="concept-list">${topicItem.mainConcepts.map(concept => `<li>${escapeHTML(concept)}</li>`).join("")}</ul>
-          </article>
-          <article class="card card-pad">
-            <h3 class="section-title">Aulas e materiais</h3>
-            <div class="lesson-grid">${topicItem.lessons.map(renderLesson).join("")}</div>
-          </article>
-          <article class="card card-pad">
-            <h3 class="section-title">Checklist de conclusão</h3>
-            <ul class="check-list">${CHECKLIST_ITEMS.map((label, index) => `<li>
-              <label class="check-item">
-                <input type="checkbox" data-check-index="${index}" ${checklist[index] ? "checked" : ""}>
-                <span>${escapeHTML(label)}</span>
-              </label>
-            </li>`).join("")}</ul>
-          </article>
-          <article class="practice-box">
-            <h3>Tarefa prática</h3>
-            <p>${escapeHTML(topicItem.projectTask)}</p>
-          </article>
-          <div class="action-row">
-            <button class="btn secondary" data-open-trail="${item.trail.id}">Ver trilha</button>
-            <button class="btn ghost" data-copy-review="${topicId}">Copiar dica de revisão</button>
-          </div>
-        </section>`;
-    }
-
-    function renderLesson(lessonItem) {
-      const action = lessonItem.type.toLowerCase().includes("aula") || lessonItem.type.toLowerCase().includes("projeto") ? "Assistir" : "Abrir";
-      return `<article class="lesson-card">
-        <h4>${escapeHTML(lessonItem.title)}</h4>
-        <div class="lesson-meta">
-          <span>${escapeHTML(lessonItem.source)}</span>
-          <span>${escapeHTML(lessonItem.type)} · ${escapeHTML(lessonItem.estimatedTime)}</span>
-        </div>
-        <a class="btn secondary" href="${escapeHTML(lessonItem.url)}" target="_blank" rel="noopener noreferrer">${action}</a>
-      </article>`;
-    }
-
-    function renderNotes() {
-      const item = findTopic(selectedTopicId);
-      if (!item) {
-        notesPanel.innerHTML = `<div class="notes-empty">Selecione um tópico para escrever suas notas.</div>`;
-        return;
-      }
-      const notes = state.notes[selectedTopicId] || {};
-      const status = getTopicStatus(selectedTopicId);
-      const labels = {
-        understood: "O que entendi",
-        doubts: "Dúvidas",
-        practice: "Aplicação prática"
+      return {
+        due: items.filter(item => item.nextReviewAt <= today),
+        soon: items.filter(item => item.nextReviewAt > today).sort((a, b) => a.nextReviewAt.localeCompare(b.nextReviewAt)).slice(0, 8),
+        reviewed: items.filter(item => ensureProgress(item.topic.id).checklist[8] || item.lastReviewedAt).sort((a, b) => (b.lastReviewedAt || "").localeCompare(a.lastReviewedAt || ""))
       };
-      notesPanel.innerHTML = `<div class="notes-head">
-        <div class="notes-title">
-          <h2>${escapeHTML(item.topic.title)}</h2>
-          <span class="status-badge" style="--status-color:${status.color}">${status.label}</span>
-        </div>
-      </div>
-      <div class="notes-tabs">${Object.entries(labels).map(([key, label]) => `<button class="tab-button ${activeNoteTab === key ? "active" : ""}" data-note-tab="${key}">${label}</button>`).join("")}</div>
-      <div class="note-editor">
-        <label for="noteText">${labels[activeNoteTab]}</label>
-        <textarea id="noteText" data-note-field="${activeNoteTab}" spellcheck="true" placeholder="Escreva com suas palavras, conecte conceitos e registre as dúvidas que merecem voltar depois.">${escapeHTML(notes[activeNoteTab] || "")}</textarea>
-        <div class="save-line">
-          <span>Salvo automaticamente</span>
-          <span id="saveIndicator">Última atualização: ${formatDate(notes.updatedAt)}</span>
-        </div>
-      </div>
-      <div class="terminal-tip">${escapeHTML(item.topic.reviewHint)}</div>`;
     }
 
-    function renderRevisions() {
-      const completed = getCompletedTopics();
-      mainPanel.innerHTML = `${renderTopbar("Revisões")}
-        <section class="trail-layout">
-          <div class="page-title">
-            <div>
-              <h2>Revisões</h2>
-              <p>Revisite os tópicos concluídos com calma, primeiro em três dias, depois em sete e quinze dias.</p>
-            </div>
-          </div>
-          <div class="topic-grid">${completed.length ? completed.map(item => `<article class="lesson-card">
-            <h3 class="project-title">${escapeHTML(item.topic.title)}</h3>
-            <p class="project-meta">${escapeHTML(item.trail.title)} · concluído em ${formatDate(state.progress[item.topic.id].completedAt)}</p>
-            <div class="concept-list">
-              <span class="tag">Revisar em 3 dias</span>
-              <span class="tag">Revisar em 7 dias</span>
-              <span class="tag">Revisar em 15 dias</span>
-            </div>
-            <div style="margin-top:12px"><button class="btn secondary" data-open-topic="${item.topic.id}">Abrir tópico</button></div>
-          </article>`).join("") : `<div class="empty-state">Quando concluir um tópico, suas revisões aparecem aqui.</div>`}</div>
-        </section>`;
-    }
-
-    function getCompletedTopics() {
-      return getAllTopics().filter(item => getChecklist(item.topic.id).every(Boolean)).sort((a, b) => {
-        const dateA = state.progress[a.topic.id]?.completedAt || "";
-        const dateB = state.progress[b.topic.id]?.completedAt || "";
-        return dateB.localeCompare(dateA);
+    function getTodayRecommendation() {
+      const reviews = getReviewGroups();
+      if (reviews.due.length) {
+        const item = reviews.due[0];
+        return { type: "review", action: "Revisar agora", item, reason: "Você já estudou este tópico, agora precisa revisar para fixar." };
+      }
+      const started = getAllTopics().find(item => {
+        const level = getTopicStatus(item.topic.id).level;
+        return level > 0 && level < 6;
       });
-    }
-
-    function renderProjects() {
-      mainPanel.innerHTML = `${renderTopbar("Projetos")}
-        <section class="trail-layout">
-          <div class="page-title">
-            <div>
-              <h2>Projetos práticos</h2>
-              <p>Escolha projetos pequenos, termine versões reais e use cada entrega como uma prova concreta da sua evolução.</p>
-            </div>
-          </div>
-          <div class="project-grid">${practicalProjects.map(renderProjectCard).join("")}</div>
-        </section>`;
-    }
-
-    function renderProjectCard(project) {
-      const saved = state.projectProgress[project.id] || {};
-      const checks = project.checklist.map((_, index) => Boolean(saved.checklist?.[index]));
-      const percent = getProjectPercent(project.id);
-      const status = percent === 100 ? "Concluído" : percent > 0 ? "Em andamento" : "Não iniciado";
-      return `<article class="project-card">
-        <div class="card-head">
-          <h3 class="project-title">${escapeHTML(project.title)}</h3>
-          <span class="status-badge" style="--status-color:${percent === 100 ? "var(--green)" : percent > 0 ? "var(--blue)" : "#77788d"}">${status}</span>
-        </div>
-        <p class="project-meta">${escapeHTML(project.description)}</p>
-        <div class="concept-list">${project.subjects.map(subject => `<span class="tag">${escapeHTML(subject)}</span>`).join("")}</div>
-        <div class="progress-bar"><div class="progress-fill" style="width:${percent}%"></div></div>
-        <ul class="project-checklist">${project.checklist.map((label, index) => `<li>
-          <label>
-            <input type="checkbox" data-project-id="${project.id}" data-project-index="${index}" ${checks[index] ? "checked" : ""}>
-            <span>${escapeHTML(label)}</span>
-          </label>
-        </li>`).join("")}</ul>
-        <button class="btn secondary" data-open-topic="${project.topicId}">Abrir detalhes</button>
-      </article>`;
+      if (started) {
+        const missing = nextAction(started.topic.id);
+        return { type: "topic", action: missing, item: started, reason: "Você começou este assunto, mas ainda não completou o ciclo de domínio." };
+      }
+      const fresh = getAllTopics().find(item => getTopicStatus(item.topic.id).level === 0);
+      if (fresh) return { type: "topic", action: "Começar o próximo tópico", item: fresh, reason: "Este é o próximo tópico da sua trilha." };
+      const project = practicalProjects.find(item => getProjectPercent(item.id) < 100) || practicalProjects[0];
+      return { type: "project", action: "Avançar projeto prático", project, reason: "A próxima evolução vem de aplicar o que você estudou em construção real." };
     }
 
     function getProjectPercent(projectId) {
@@ -1692,18 +2098,662 @@
       return Math.round((done / project.checklist.length) * 100);
     }
 
-    function renderBackup() {
-      mainPanel.innerHTML = `${renderTopbar("Backup")}
-        <section class="backup-layout">
-          <div class="page-title">
-            <div>
-              <h2>Backup e sincronização manual</h2>
-              <p>Exporte seus dados em JSON, importe quando precisar e limpe tudo apenas quando tiver certeza.</p>
+    function getMetrics() {
+      const overall = getOverallProgress();
+      const reviews = getReviewGroups();
+      const errors = getErrorEntries();
+      const projectsInProgress = practicalProjects.filter(project => {
+        const percent = getProjectPercent(project.id);
+        return percent > 0 && percent < 100;
+      }).length;
+      return {
+        started: overall.started,
+        dominated: overall.dominated,
+        reviewsDue: reviews.due.length,
+        errors: errors.length,
+        projectsInProgress,
+        streak: getStudyStreak()
+      };
+    }
+
+    function getStudyStreak() {
+      let streak = 0;
+      let day = new Date();
+      while (true) {
+        const key = day.toISOString().slice(0, 10);
+        if (!state.studyLog[key]) break;
+        streak += 1;
+        day.setDate(day.getDate() - 1);
+      }
+      return streak;
+    }
+
+    function getErrorEntries() {
+      return getAllTopics().map(item => {
+        const error = ensureError(item.topic.id);
+        return { ...item, error };
+      }).filter(item => ["tried", "happened", "resolved", "nextTime", "difficulty"].some(field => item.error[field]?.trim()));
+    }
+
+    function render() {
+      renderNav();
+      renderFooter();
+      if (appView === "dashboard") renderDashboard();
+      if (appView === "trail") renderTrail(selectedTrailId);
+      if (appView === "topic") renderTopic(selectedTopicId);
+      if (appView === "focus") renderFocusMode(selectedTopicId);
+      if (appView === "revisions") renderRevisions();
+      if (appView === "errors") renderErrorLab();
+      if (appView === "week") renderWeek();
+      if (appView === "projects") renderProjects();
+      if (appView === "backup") renderBackup();
+      renderNotes();
+      bindNotesEvents();
+      bindGlobalEvents();
+    }
+
+    function renderNav() {
+      navList.innerHTML = navItems.map(item => {
+        const isActive = item.type === "trail" ? appView === "trail" && selectedTrailId === item.id : appView === item.id;
+        const progress = item.type === "trail" ? `${getTrailProgress(item.id).percent}%` : "";
+        return `<li><button class="nav-button ${isActive ? "active" : ""}" data-nav="${item.id}" data-type="${item.type}">
+          <span class="nav-icon">${escapeHTML(item.icon)}</span>
+          <span>${escapeHTML(item.label)}</span>
+          <span class="metric-label">${progress}</span>
+        </button></li>`;
+      }).join("");
+      navList.querySelectorAll("[data-nav]").forEach(button => {
+        button.addEventListener("click", () => {
+          if (button.dataset.type === "trail") {
+            selectedTrailId = button.dataset.nav;
+            appView = "trail";
+          } else {
+            appView = button.dataset.nav;
+          }
+          render();
+        });
+      });
+    }
+
+    function renderFooter() {
+      const metrics = getMetrics();
+      sidebarFooter.innerHTML = `<strong>${metrics.streak} dia${metrics.streak === 1 ? "" : "s"} de sequência</strong><br>
+        ${metrics.dominated} tópicos dominados, ${metrics.reviewsDue} revisão${metrics.reviewsDue === 1 ? "" : "ões"} pendente${metrics.reviewsDue === 1 ? "" : "s"}.`;
+    }
+
+    function renderTopbar(label) {
+      return `<div class="topbar">
+        <span class="breadcrumb">${label}</span>
+        <label class="search-box" aria-label="Buscar tópico">
+          <span>⌕</span>
+          <input id="topicSearch" type="search" placeholder="Buscar tópico, trilha ou projeto">
+        </label>
+      </div>`;
+    }
+
+    function renderDashboard() {
+      const overall = getOverallProgress();
+      const metrics = getMetrics();
+      const recommendation = getTodayRecommendation();
+      const reviews = getReviewGroups();
+      const inProgress = getAllTopics().filter(item => {
+        const level = getTopicStatus(item.topic.id).level;
+        return level > 0 && level < 6;
+      }).slice(0, 4);
+      const recentErrors = getErrorEntries().sort((a, b) => (b.error.updatedAt || "").localeCompare(a.error.updatedAt || "")).slice(0, 3);
+      const projects = practicalProjects.filter(project => getProjectPercent(project.id) > 0 && getProjectPercent(project.id) < 100).slice(0, 3);
+      const last = findTopic(state.lastTopicId || selectedTopicId);
+      const todayItem = recommendation.item || findTopic(state.lastTopicId || selectedTopicId);
+      mainPanel.innerHTML = `${renderTopbar("Dashboard")}
+        <section class="dashboard-grid">
+          <article class="card card-pad span-7">
+            <h2 class="card-title">Progresso geral por domínio</h2>
+            <div class="progress-summary">
+              <div class="progress-ring" style="--value:${overall.percent * 3.6}deg"><span class="metric-value">${overall.percent}%</span></div>
+              <div class="metric-list">
+                <span>Tópicos dominados <strong>${overall.dominated} de ${overall.total}</strong></span>
+                <span>Tópicos iniciados <strong>${metrics.started}</strong></span>
+                <span>Revisões pendentes <strong>${metrics.reviewsDue}</strong></span>
+                <span>Erros registrados <strong>${metrics.errors}</strong></span>
+                <span>Sequência de estudo <strong>${metrics.streak} dia${metrics.streak === 1 ? "" : "s"}</strong></span>
+              </div>
             </div>
+          </article>
+          <article class="card card-pad span-5 continue-card">
+            <h2 class="card-title">Continuar de onde parou</h2>
+            <div class="focus-box">
+              <h3>${escapeHTML(last.trail.title)}</h3>
+              <p>${escapeHTML(last.topic.title)}</p>
+              <p>${escapeHTML(nextAction(last.topic.id))}</p>
+            </div>
+            <button class="btn" data-open-focus="${last.topic.id}">Abrir Modo Foco</button>
+          </article>
+          <article class="card card-pad span-7">
+            <h2 class="card-title">Progresso por trilha</h2>
+            <div class="track-grid" style="margin-top:12px">${curriculum.map(renderTrackCard).join("")}</div>
+          </article>
+          <article class="card card-pad span-5">
+            <h2 class="card-title">Estudo de hoje</h2>
+            <div class="today-list">
+              <div class="mini-row"><span>Trilha</span><strong>${escapeHTML(recommendation.type === "project" ? "Projetos" : todayItem.trail.title)}</strong></div>
+              <div class="mini-row"><span>Tópico</span><strong>${escapeHTML(recommendation.type === "project" ? recommendation.project.title : todayItem.topic.title)}</strong></div>
+              <div class="mini-row"><span>Ação</span><small>${escapeHTML(recommendation.action)}</small></div>
+              <div class="terminal-tip">${escapeHTML(recommendation.reason)}</div>
+            </div>
+            <div style="margin-top:14px">
+              ${recommendation.type === "project" ? `<button class="btn secondary" data-nav="projects" data-type="view">Começar agora</button>` : `<button class="btn secondary" data-open-focus="${todayItem.topic.id}">Começar agora</button>`}
+            </div>
+          </article>
+          <article class="card card-pad span-4">
+            <h2 class="card-title">Revisões pendentes</h2>
+            <div class="small-stack" style="margin-top:12px">${reviews.due.length ? reviews.due.slice(0, 3).map(renderMiniTopic).join("") : `<div class="empty-state">Nenhuma revisão pendente agora.</div>`}</div>
+          </article>
+          <article class="card card-pad span-4">
+            <h2 class="card-title">Projetos em andamento</h2>
+            <div class="small-stack" style="margin-top:12px">${projects.length ? projects.map(renderMiniProject).join("") : practicalProjects.slice(0, 3).map(renderMiniProject).join("")}</div>
+          </article>
+          <article class="card card-pad span-4">
+            <h2 class="card-title">Ritmo da adega</h2>
+            <div class="terminal-tip">Cada tópico só vira domínio quando você lembra, pratica, erra, corrige, explica, aplica e revisa. A aula abre a porta, mas a prática atravessa.</div>
+          </article>
+          <article class="card card-pad span-12">
+            <h2 class="card-title">Tópicos em andamento</h2>
+            <div class="topic-grid">${inProgress.length ? inProgress.map(renderMiniTopic).join("") : `<div class="empty-state">Comece um tópico para acompanhar o ciclo de domínio.</div>`}</div>
+          </article>
+          <article class="card card-pad span-12">
+            <h2 class="card-title">Erros recentes</h2>
+            <div class="topic-grid">${recentErrors.length ? recentErrors.map(renderMiniError).join("") : `<div class="empty-state">Registre dificuldades para transformar erro em aprendizado.</div>`}</div>
+          </article>
+        </section>`;
+    }
+
+    function metricCard(label, value) {
+      return `<div class="metric-chip"><div class="metric-value">${value}</div><div class="metric-label">${label}</div></div>`;
+    }
+
+    function renderRecommendation(rec) {
+      if (rec.type === "project") {
+        return `<div class="recommendation-card">
+          <span class="pill" style="--status-color:var(--magenta)">${escapeHTML(rec.action)}</span>
+          <h4 class="recommendation-title">${escapeHTML(rec.project.title)}</h4>
+          <p class="recommendation-reason">${escapeHTML(rec.reason)}</p>
+          <button class="btn" data-nav="projects" data-type="view">Começar agora</button>
+        </div>`;
+      }
+      return `<div class="recommendation-card">
+        <span class="pill" style="--status-color:${getTopicStatus(rec.item.topic.id).color}">${escapeHTML(rec.action)}</span>
+        <h4 class="recommendation-title">${escapeHTML(rec.item.topic.title)}</h4>
+        <p class="muted">${escapeHTML(rec.item.trail.title)}</p>
+        <p class="recommendation-reason">${escapeHTML(rec.reason)}</p>
+        <button class="btn" data-open-focus="${rec.item.topic.id}">Começar agora</button>
+      </div>`;
+    }
+
+    function renderTrackCard(trail) {
+      const progress = getTrailProgress(trail.id);
+      return `<div class="track-card" style="--track-color:${trail.color}">
+        <button data-open-trail="${trail.id}">
+          <div class="track-head">
+            <span class="track-icon">${escapeHTML(trail.icon)}</span>
+            <span class="track-percent">${progress.percent}%</span>
           </div>
-          <article class="backup-card card">
-            <h3>Seus dados locais</h3>
-            <p>O Code Wine salva progresso, anotações, último tópico acessado, projetos e configurações no navegador.</p>
+          <h3 class="track-title">${escapeHTML(trail.title)}</h3>
+          <p class="track-desc">${escapeHTML(trail.description)}</p>
+          <div class="progress-bar"><div class="progress-fill" style="--fill-color:${trail.color}; width:${progress.percent}%"></div></div>
+        </button>
+      </div>`;
+    }
+
+    function renderTrail(trailId) {
+      const trail = findTrail(trailId);
+      const progress = getTrailProgress(trail.id);
+      mainPanel.innerHTML = `${renderTopbar(`Trilha > ${escapeHTML(trail.title)}`)}
+        <section class="page-title">
+          <div>
+            <h2>${escapeHTML(trail.title)}</h2>
+            <p>${escapeHTML(trail.description)}</p>
+          </div>
+          <span class="pill" style="--status-color:${trail.color}">${progress.dominated} de ${progress.total} dominados</span>
+        </section>
+        <article class="card card-pad">
+          <h3 class="card-title">Domínio da trilha</h3>
+          <div class="progress-bar"><div class="progress-fill" style="--fill-color:${trail.color}; width:${progress.percent}%"></div></div>
+        </article>
+        <section class="grid" style="margin-top:var(--gap)">${trail.modules.map(renderModule).join("")}</section>`;
+    }
+
+    function renderModule(module) {
+      return `<article class="module-card">
+        <h3>${escapeHTML(module.title)}</h3>
+        <p class="muted">${escapeHTML(module.description)}</p>
+        <div class="grid">${module.topics.map(topicItem => renderTopicButton(topicItem)).join("")}</div>
+      </article>`;
+    }
+
+    function renderTopicButton(topicItem) {
+      const status = getTopicStatus(topicItem.id);
+      return `<button class="topic-item ${selectedTopicId === topicItem.id ? "active" : ""}" data-open-topic="${topicItem.id}">
+        <span class="status-dot" style="--status-color:${status.color}">${status.icon}</span>
+        <span>${escapeHTML(topicItem.title)}</span>
+        <span class="status-badge" style="--status-color:${status.color}">${status.label}</span>
+      </button>`;
+    }
+
+    function renderTopic(topicId) {
+      const item = findTopic(topicId);
+      const topicItem = item.topic;
+      const status = getTopicStatus(topicId);
+      const progress = ensureProgress(topicId);
+      mainPanel.innerHTML = `${renderTopbar(`${escapeHTML(item.trail.title)} > ${escapeHTML(item.module.title)}`)}
+        <section class="grid">
+          <article class="topic-hero">
+            <div class="card-head">
+              <div>
+                <h2 class="topic-title">${escapeHTML(topicItem.title)}</h2>
+                <p class="muted">${escapeHTML(topicItem.description)}</p>
+              </div>
+              <span class="status-badge" style="--status-color:${status.color}">${status.label}</span>
+            </div>
+            <div><strong>Objetivo:</strong> ${escapeHTML(topicItem.objective)}</div>
+            <ul class="concept-list">${topicItem.concepts.map(concept => `<li class="tag">${escapeHTML(concept)}</li>`).join("")}</ul>
+            <div class="action-row">
+              <button class="btn" data-open-focus="${topicId}">Entrar no Modo Foco</button>
+              <button class="btn secondary" data-open-trail="${item.trail.id}">Ver trilha</button>
+            </div>
+          </article>
+          <article class="card card-pad">
+            <h3 class="section-title">Aulas e materiais</h3>
+            <div class="lesson-grid">${topicItem.lessons.map(renderLesson).join("")}</div>
+          </article>
+          <article class="card card-pad">
+            <h3 class="section-title">Checklist de domínio</h3>
+            <div class="check-list">${CHECKLIST_ITEMS.map((label, index) => renderCheck(topicId, label, index, progress.checklist[index])).join("")}</div>
+          </article>
+          <article class="practice-box">
+            <strong>Tarefa prática:</strong> ${escapeHTML(topicItem.projectTask)}
+          </article>
+        </section>`;
+    }
+
+    function renderLesson(item) {
+      return `<article class="lesson-card">
+        <h3>${escapeHTML(item.title)}</h3>
+        <p class="muted">${escapeHTML(item.source)} · ${escapeHTML(item.type)} · ${escapeHTML(item.estimatedTime)}</p>
+        <a class="btn secondary" href="${escapeHTML(item.url)}" target="_blank" rel="noopener noreferrer">Abrir material</a>
+      </article>`;
+    }
+
+    function renderCheck(topicId, label, index, checked) {
+      return `<label class="check-item">
+        <input type="checkbox" data-check-topic="${topicId}" data-check-index="${index}" ${checked ? "checked" : ""}>
+        <span>${escapeHTML(label)}</span>
+      </label>`;
+    }
+
+    function renderFocusMode(topicId) {
+      const item = findTopic(topicId);
+      const topicItem = item.topic;
+      const progress = ensureProgress(topicId);
+      const status = getTopicStatus(topicId);
+      const notes = ensureNotes(topicId);
+      const error = ensureError(topicId);
+      const mainLesson = topicItem.lessons[0];
+      mainPanel.innerHTML = `${renderTopbar("Modo Foco")}
+        <section class="focus-shell">
+          <article class="focus-panel">
+            <div class="card-head">
+              <div>
+                <h2 class="topic-title">${escapeHTML(topicItem.title)}</h2>
+                <p class="muted">${escapeHTML(topicItem.objective)}</p>
+              </div>
+              <span class="status-badge" style="--status-color:${status.color}">${status.label}</span>
+            </div>
+            <div class="action-row">
+              <a class="btn secondary" href="${escapeHTML(mainLesson.url)}" target="_blank" rel="noopener noreferrer">Abrir material principal</a>
+              <button class="btn ghost" data-open-topic="${topicId}">Sair do Modo Foco</button>
+            </div>
+          </article>
+          <div class="focus-grid">
+            <section class="grid">
+              <article class="focus-panel">
+                <h3 class="section-title">Perguntas de recuperação ativa</h3>
+                <ol class="muted">${topicItem.questions.map(question => `<li>${escapeHTML(question)}</li>`).join("")}</ol>
+                <div class="field-grid">
+                  <label for="focusMemory">Resposta de memória</label>
+                  <textarea id="focusMemory" data-note-field="memory" data-topic-id="${topicId}" placeholder="Responda antes de rever a aula. O esforço de lembrar é parte do aprendizado.">${escapeHTML(notes.memory || "")}</textarea>
+                </div>
+              </article>
+              <article class="focus-panel">
+                <h3 class="section-title">Prática no VS Code</h3>
+                <p class="muted">${escapeHTML(topicItem.projectTask)}</p>
+                <div class="field-grid">
+                  <label for="focusPractice">Aplicação prática</label>
+                  <textarea id="focusPractice" data-note-field="practice" data-topic-id="${topicId}" placeholder="Registre o que você construiu, onde travou e o que precisa melhorar.">${escapeHTML(notes.practice || "")}</textarea>
+                </div>
+              </article>
+              <article class="focus-panel">
+                <h3 class="section-title">Explicação com minhas palavras</h3>
+                <textarea data-note-field="explanation" data-topic-id="${topicId}" placeholder="Explique como se estivesse ensinando alguém que está começando.">${escapeHTML(notes.explanation || "")}</textarea>
+              </article>
+            </section>
+            <aside class="grid">
+              <article class="focus-panel">
+                <h3 class="section-title">Checklist de domínio</h3>
+                <div class="check-list">${CHECKLIST_ITEMS.map((label, index) => renderCheck(topicId, label, index, progress.checklist[index])).join("")}</div>
+              </article>
+              <article class="focus-panel">
+                <h3 class="section-title">Erros e dificuldades</h3>
+                ${renderErrorFields(topicId, error)}
+              </article>
+            </aside>
+          </div>
+        </section>`;
+      setTimeout(() => document.getElementById("focusMemory")?.focus(), 50);
+    }
+
+    function renderErrorFields(topicId, error) {
+      const fields = [
+        ["tried", "O que tentei fazer"],
+        ["happened", "Qual erro aconteceu"],
+        ["resolved", "Como resolvi ou o que entendi"],
+        ["nextTime", "O que vou fazer diferente na próxima vez"]
+      ];
+      return `<div class="field-grid">${fields.map(([key, label]) => `
+        <label>${label}</label>
+        <textarea data-error-field="${key}" data-topic-id="${topicId}" placeholder="${label}">${escapeHTML(error[key] || "")}</textarea>
+      `).join("")}</div>`;
+    }
+
+    function renderNotes() {
+      const item = findTopic(selectedTopicId);
+      if (!item) {
+        notesPanel.innerHTML = `<div class="empty-state">Selecione um tópico para escrever.</div>`;
+        return;
+      }
+      const notes = ensureNotes(selectedTopicId);
+      const status = getTopicStatus(selectedTopicId);
+      const label = NOTE_TABS.find(([key]) => key === activeNoteTab)?.[1] || "Anotações";
+      notesPanel.innerHTML = `<div class="notes-head">
+        <div class="notes-title">
+          <h2>${escapeHTML(item.topic.title)}</h2>
+          <span class="status-badge" style="--status-color:${status.color}">${status.label}</span>
+        </div>
+      </div>
+      <div class="notes-tabs">${NOTE_TABS.map(([key, tabLabel]) => `<button class="tab-button ${activeNoteTab === key ? "active" : ""}" data-note-tab="${key}">${tabLabel}</button>`).join("")}</div>
+      <div class="note-editor">
+        <label for="noteText">${escapeHTML(label)}</label>
+        <textarea id="noteText" data-note-field="${activeNoteTab}" data-topic-id="${selectedTopicId}" spellcheck="true" placeholder="Escreva com calma, como quem transforma aula em pensamento próprio.">${escapeHTML(notes[activeNoteTab] || "")}</textarea>
+        <div class="save-line">
+          <span>Salvo automaticamente</span>
+          <span id="saveIndicator">Última atualização: ${formatDate(notes.updatedAt)}</span>
+        </div>
+      </div>
+      <div class="terminal-box" style="margin-top:12px">${escapeHTML(item.topic.reviewHint)}</div>`;
+    }
+
+    function renderRevisions() {
+      const groups = getReviewGroups();
+      mainPanel.innerHTML = `${renderTopbar("Revisões")}
+        <section class="page-title">
+          <div>
+            <h2>Revisão espaçada simples</h2>
+          </div>
+        </section>
+        <section class="dashboard-grid">
+          <article class="card card-pad span-4">
+            <h3 class="card-title">Precisam de revisão hoje</h3>
+            <div class="grid">${groups.due.length ? groups.due.map(item => renderReviewCard(item, true)).join("") : `<div class="empty-state">Nada pendente hoje.</div>`}</div>
+          </article>
+          <article class="card card-pad span-4">
+            <h3 class="card-title">Em breve</h3>
+            <div class="grid">${groups.soon.length ? groups.soon.map(item => renderReviewCard(item, false)).join("") : `<div class="empty-state">Sem revisões futuras por enquanto.</div>`}</div>
+          </article>
+          <article class="card card-pad span-4">
+            <h3 class="card-title">Já revisados</h3>
+            <div class="grid">${groups.reviewed.length ? groups.reviewed.slice(0, 8).map(item => renderReviewCard(item, false)).join("") : `<div class="empty-state">Marque uma revisão para aparecer aqui.</div>`}</div>
+          </article>
+        </section>`;
+    }
+
+    function renderReviewCard(item, canMark) {
+      return `<div class="terminal-box">
+        <strong>${escapeHTML(item.topic.title)}</strong>
+        <p class="muted">${escapeHTML(item.trail.title)} · próxima revisão em ${formatDate(item.nextReviewAt)}</p>
+        <div class="action-row">
+          <button class="btn secondary" data-open-focus="${item.topic.id}">Abrir</button>
+          ${canMark ? `<button class="btn" data-mark-reviewed="${item.topic.id}">Marcar como revisado</button>` : ""}
+        </div>
+      </div>`;
+    }
+
+    function renderErrorLab() {
+      const entries = getErrorEntries().sort((a, b) => (b.error.updatedAt || "").localeCompare(a.error.updatedAt || ""));
+      mainPanel.innerHTML = `${renderTopbar("Laboratório de Erros")}
+        <section class="page-title">
+          <div>
+            <h2>Laboratório de Erros</h2>
+          </div>
+        </section>
+        <section class="grid">${entries.length ? entries.map(renderErrorCard).join("") : `<div class="empty-state">Sem registros.</div>`}</section>`;
+    }
+
+    function renderErrorCard(item) {
+      return `<article class="error-card">
+        <div class="card-head">
+          <h3>${escapeHTML(item.trail.title)} · ${escapeHTML(item.topic.title)}</h3>
+          <span class="pill" style="--status-color:var(--magenta)">${formatDate(item.error.updatedAt)}</span>
+        </div>
+        <p class="muted"><strong>Erro ou dificuldade:</strong> ${escapeHTML(item.error.happened || item.error.difficulty || "Sem descrição detalhada.")}</p>
+        <p class="muted"><strong>Como foi resolvido:</strong> ${escapeHTML(item.error.resolved || "Ainda precisa ser investigado.")}</p>
+        <button class="btn secondary" data-open-focus="${item.topic.id}">Abrir tópico</button>
+      </article>`;
+    }
+
+    function renderWeek() {
+      const weekStart = getSelectedWeekStart();
+      const weekKey = getWeekKeyFromDate(weekStart);
+      const plan = ensureWeekPlan(weekKey);
+      const days = getCurrentWeekDays(weekStart);
+      const summary = getWeeklySummary(weekStart);
+      mainPanel.innerHTML = `${renderTopbar("Semana")}
+        <section class="page-title">
+          <div>
+            <h2>Semana</h2>
+          </div>
+        </section>
+        <div class="week-toolbar">
+          <div class="week-title">
+            <h3>${escapeHTML(getWeekRangeLabel(weekStart))}</h3>
+            <span class="pill" style="--status-color:var(--blue)">${escapeHTML(weekKey)}</span>
+          </div>
+          <div class="week-actions">
+            <button class="btn ghost" data-week-nav="-7">Semana anterior</button>
+            <button class="btn secondary" data-week-today="true">Semana atual</button>
+            <button class="btn ghost" data-week-nav="7">Próxima semana</button>
+          </div>
+        </div>
+        <section class="dashboard-grid">
+          <article class="card card-pad span-12">
+            <div class="card-head">
+              <h3 class="card-title">Calendário semanal</h3>
+              <span class="muted">${summary.plannedDays} dia${summary.plannedDays === 1 ? "" : "s"} planejado${summary.plannedDays === 1 ? "" : "s"}, ${summary.doneDays} concluído${summary.doneDays === 1 ? "" : "s"}</span>
+            </div>
+            <div class="calendar-grid">${days.map(day => renderDayCard(day, plan.days[day] || {})).join("")}</div>
+          </article>
+          <article class="card card-pad span-4">
+            <h3 class="card-title">Resumo da semana</h3>
+            <div class="metric-strip">
+              ${metricCard("Tópicos estudados", summary.studied)}
+              ${metricCard("Tópicos dominados", summary.dominated)}
+              ${metricCard("Revisões feitas", summary.reviews)}
+              ${metricCard("Erros registrados", summary.errors)}
+              ${metricCard("Dias concluídos", summary.doneDays)}
+              ${metricCard("Minutos", summary.minutes)}
+            </div>
+          </article>
+          <article class="card card-pad span-8">
+            <h3 class="card-title">Revisão e direção da semana</h3>
+            <div class="week-review-grid">${[
+              ["focus", "Foco da semana"],
+              ["conclude", "O que quero concluir"],
+              ["studied", "O que realmente estudei"],
+              ["blocked", "Onde travei"],
+              ["review", "O que preciso revisar"],
+              ["next", "Próxima ação da semana"]
+            ].map(([key, label]) => `
+              <div class="field-grid">
+                <label>${label}</label>
+                <textarea data-week-field="${key}" data-week-key="${weekKey}" placeholder="${label}">${escapeHTML(plan[key] || "")}</textarea>
+              </div>
+            `).join("")}</div>
+          </article>
+        </section>`;
+    }
+
+    function renderDayCard(day, data) {
+      const date = new Date(`${day}T12:00:00`);
+      const today = todayISO();
+      const dayName = date.toLocaleDateString("pt-BR", { weekday: "short" }).replace(".", "");
+      const dateLabel = date.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
+      return `<article class="day-card ${day === today ? "today" : ""} ${data.done ? "done" : ""}">
+        <div class="day-head">
+          <div>
+            <h4 class="day-name">${escapeHTML(dayName)}</h4>
+            <span class="day-date">${escapeHTML(dateLabel)}</span>
+          </div>
+          ${day === today ? `<span class="pill" style="--status-color:var(--green)">Hoje</span>` : ""}
+        </div>
+        <label class="field-grid">
+          <span>Plano</span>
+          <textarea data-day-field="plan" data-day-date="${day}" placeholder="O que estudar">${escapeHTML(data.plan || "")}</textarea>
+        </label>
+        <label class="field-grid">
+          <span>Realizado</span>
+          <textarea data-day-field="doneText" data-day-date="${day}" placeholder="O que aconteceu">${escapeHTML(data.doneText || "")}</textarea>
+        </label>
+        <label class="field-grid">
+          <span>Minutos</span>
+          <input type="number" min="0" step="5" data-day-field="minutes" data-day-date="${day}" value="${escapeHTML(data.minutes || "")}" placeholder="0">
+        </label>
+        <label class="day-check">
+          <input type="checkbox" data-day-field="done" data-day-date="${day}" ${data.done ? "checked" : ""}>
+          Dia concluído
+        </label>
+      </article>`;
+    }
+
+    function getWeeklySummary(weekStart = getSelectedWeekStart()) {
+      const days = getCurrentWeekDays(weekStart);
+      const weekKey = getWeekKeyFromDate(weekStart);
+      const plan = ensureWeekPlan(weekKey);
+      const logs = days.map(day => state.studyLog[day]).filter(Boolean);
+      const touched = new Set();
+      getAllTopics().forEach(item => {
+        const progress = ensureProgress(item.topic.id);
+        if (progress.updatedAt && days.includes(progress.updatedAt.slice(0, 10))) touched.add(item.topic.id);
+      });
+      const dominated = getAllTopics().filter(item => {
+        const progress = ensureProgress(item.topic.id);
+        return progress.masteryLevel >= 6 && progress.updatedAt && days.includes(progress.updatedAt.slice(0, 10));
+      }).length;
+      const dayEntries = days.map(day => plan.days[day] || {});
+      return {
+        studied: touched.size,
+        dominated,
+        reviews: logs.reduce((sum, item) => sum + (item.review || 0), 0),
+        errors: logs.reduce((sum, item) => sum + (item.error || 0), 0),
+        plannedDays: dayEntries.filter(day => (day.plan || "").trim()).length,
+        doneDays: dayEntries.filter(day => day.done).length,
+        minutes: dayEntries.reduce((sum, day) => sum + (Number(day.minutes) || 0), 0)
+      };
+    }
+
+    function renderProjects() {
+      mainPanel.innerHTML = `${renderTopbar("Projetos")}
+        <section class="page-title">
+          <div>
+            <h2>Projetos práticos</h2>
+            <p>Cada projeto mostra quais assuntos ele pratica, porque conhecimento precisa encostar em construção real.</p>
+          </div>
+        </section>
+        <section class="project-grid">${practicalProjects.map(renderProjectCard).join("")}</section>`;
+    }
+
+    function renderProjectCard(project) {
+      const saved = state.projectProgress[project.id]?.checklist || [];
+      const checks = project.checklist.map((_, index) => Boolean(saved[index]));
+      const percent = getProjectPercent(project.id);
+      const status = percent === 100 ? "Concluído" : percent > 0 ? "Em andamento" : "Não iniciado";
+      const color = percent === 100 ? "var(--green)" : percent > 0 ? "var(--blue)" : "#8b8ca1";
+      return `<article class="project-card">
+        <div class="card-head">
+          <h3>${escapeHTML(project.title)}</h3>
+          <span class="status-badge" style="--status-color:${color}">${status}</span>
+        </div>
+        <p class="muted">${escapeHTML(project.description)}</p>
+        <p class="muted"><strong>Objetivo:</strong> ${escapeHTML(project.objective)}</p>
+        <ul class="tag-list">${project.subjects.map(subject => `<li class="tag">${escapeHTML(subject)}</li>`).join("")}</ul>
+        <div class="progress-bar"><div class="progress-fill" style="width:${percent}%"></div></div>
+        <div class="check-list">${project.checklist.map((label, index) => `<label><input type="checkbox" data-project-id="${project.id}" data-project-index="${index}" ${checks[index] ? "checked" : ""}>${escapeHTML(label)}</label>`).join("")}</div>
+        <div class="action-row">
+          <button class="btn secondary" data-open-project-topics="${project.id}">Abrir tópicos relacionados</button>
+        </div>
+      </article>`;
+    }
+
+    function renderProjectTopics(projectId) {
+      const project = practicalProjects.find(item => item.id === projectId);
+      const related = project.topicIds.map(findTopic);
+      mainPanel.innerHTML = `${renderTopbar(`Projetos > ${escapeHTML(project.title)}`)}
+        <section class="page-title">
+          <div>
+            <h2>${escapeHTML(project.title)}</h2>
+            <p>${escapeHTML(project.objective)}</p>
+          </div>
+        </section>
+        <section class="grid">${related.map(renderMiniTopic).join("")}</section>`;
+    }
+
+    function renderBackup() {
+      const firebase = getFirebaseSettings();
+      mainPanel.innerHTML = `${renderTopbar("Backup")}
+        <section class="page-title">
+          <div>
+            <h2>Backup completo</h2>
+          </div>
+        </section>
+        <section class="grid">
+          <article class="card card-pad">
+            <h3>Firebase Firestore</h3>
+            <p class="muted">Crie um projeto no Firebase, adicione um app Web, copie o objeto <strong>firebaseConfig</strong> e cole aqui. Por enquanto, sem login, o Code Wine usa um documento único por workspace.</p>
+            <div class="terminal-box" id="firebaseStatus">${escapeHTML(firebase.status)}</div>
+            <div class="field-grid" style="margin-top:12px">
+              <label class="day-check">
+                <input id="firebaseEnabled" type="checkbox" ${firebase.enabled ? "checked" : ""}>
+                Ativar sincronização com Firebase
+              </label>
+              <label for="firebaseConfigText">firebaseConfig</label>
+              <textarea id="firebaseConfigText" placeholder="Cole aqui o objeto firebaseConfig do app Web criado no Firebase">${escapeHTML(firebase.configText)}</textarea>
+              <div class="week-review-grid">
+                <div class="field-grid">
+                  <label for="firebaseCollection">Coleção Firestore</label>
+                  <input id="firebaseCollection" value="${escapeHTML(firebase.collectionName)}" placeholder="codeWineWorkspaces">
+                </div>
+                <div class="field-grid">
+                  <label for="firebaseWorkspace">Workspace ID</label>
+                  <input id="firebaseWorkspace" value="${escapeHTML(firebase.workspaceId)}" placeholder="code-wine-main">
+                </div>
+              </div>
+              <div class="backup-actions">
+                <button class="btn" id="saveFirebaseSettings">Salvar configuração</button>
+                <button class="btn secondary" id="connectFirebase">Conectar e sincronizar</button>
+                <button class="btn ghost" id="syncFirebaseNow">Enviar dados agora</button>
+              </div>
+            </div>
+          </article>
+          <article class="card card-pad">
+            <h3>Dados locais do Code Wine</h3>
+            <p class="muted">Mesmo com Firebase, o app mantém uma cópia local no navegador. Exporte seu JSON antes de limpar dados ou trocar de computador.</p>
             <div class="backup-actions">
               <button class="btn" id="exportData">Exportar dados</button>
               <label class="btn secondary" for="importData">Importar dados</label>
@@ -1714,109 +2764,189 @@
         </section>`;
     }
 
-    function bindMainEvents() {
-      mainPanel.querySelectorAll("[data-open-topic]").forEach(button => {
-        button.addEventListener("click", () => openTopic(button.dataset.openTopic));
-      });
+    function renderMiniTopic(item) {
+      const status = getTopicStatus(item.topic.id);
+      return `<div class="mini-row">
+        <div class="row">
+          <strong>${escapeHTML(item.topic.title)}</strong>
+          <span class="status-badge" style="--status-color:${status.color}">${status.label}</span>
+        </div>
+        <span>${escapeHTML(item.trail.title)} · ${escapeHTML(nextAction(item.topic.id))}</span>
+        <div class="action-row">
+          <button class="btn secondary" data-open-topic="${item.topic.id}">Abrir</button>
+          <button class="btn" data-open-focus="${item.topic.id}">Modo Foco</button>
+        </div>
+      </div>`;
+    }
 
-      mainPanel.querySelectorAll("[data-open-trail]").forEach(button => {
-        button.addEventListener("click", () => {
-          selectedTrailId = button.dataset.openTrail;
-          appView = "trail";
-          render();
+    function renderMiniError(item) {
+      return `<div class="mini-row">
+        <strong>${escapeHTML(item.topic.title)}</strong>
+        <span>${escapeHTML(item.error.happened || item.error.difficulty || "Dificuldade registrada.")}</span>
+        <button class="btn secondary" data-open-focus="${item.topic.id}">Abrir</button>
+      </div>`;
+    }
+
+    function renderMiniProject(project) {
+      const percent = getProjectPercent(project.id);
+      return `<div class="mini-row">
+        <div class="row"><strong>${escapeHTML(project.title)}</strong><span>${percent}%</span></div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${percent}%"></div></div>
+      </div>`;
+    }
+
+    function bindGlobalEvents() {
+      mainPanel.querySelectorAll("[data-open-topic]").forEach(button => button.addEventListener("click", () => openTopic(button.dataset.openTopic)));
+      mainPanel.querySelectorAll("[data-open-focus]").forEach(button => button.addEventListener("click", () => openFocus(button.dataset.openFocus)));
+      mainPanel.querySelectorAll("[data-open-trail]").forEach(button => button.addEventListener("click", () => {
+        selectedTrailId = button.dataset.openTrail;
+        appView = "trail";
+        render();
+      }));
+      mainPanel.querySelectorAll("[data-check-topic]").forEach(input => input.addEventListener("change", () => {
+        const topicId = input.dataset.checkTopic;
+        const checklist = ensureProgress(topicId).checklist.slice();
+        checklist[Number(input.dataset.checkIndex)] = input.checked;
+        dataStore.updateTopicProgress(topicId, checklist);
+        showToast("Progresso salvo.");
+        render();
+      }));
+      mainPanel.querySelectorAll("[data-note-field]").forEach(textarea => bindAutosave(textarea));
+      mainPanel.querySelectorAll("[data-error-field]").forEach(textarea => bindErrorAutosave(textarea));
+      mainPanel.querySelectorAll("[data-week-field]").forEach(textarea => {
+        textarea.addEventListener("input", () => {
+          clearTimeout(noteTimer);
+          noteTimer = setTimeout(() => {
+            dataStore.updateWeekly(textarea.dataset.weekField, textarea.value, textarea.dataset.weekKey);
+            showToast("Semana salva.");
+          }, 500);
         });
       });
-
-      mainPanel.querySelectorAll("[data-check-index]").forEach(input => {
-        input.addEventListener("change", () => {
-          const checklist = getChecklist(selectedTopicId);
-          checklist[Number(input.dataset.checkIndex)] = input.checked;
-          dataStore.updateTopicProgress(selectedTopicId, checklist);
-          render();
-          showToast("Progresso salvo.");
+      mainPanel.querySelectorAll("[data-day-field]").forEach(input => {
+        const eventName = input.type === "checkbox" ? "change" : "input";
+        input.addEventListener(eventName, () => {
+          clearTimeout(noteTimer);
+          noteTimer = setTimeout(() => {
+            const value = input.type === "checkbox" ? input.checked : input.value;
+            dataStore.updateWeeklyDay(input.dataset.dayDate, input.dataset.dayField, value);
+            showToast("Calendário salvo.");
+            if (input.type === "checkbox") render();
+          }, input.type === "checkbox" ? 0 : 500);
         });
       });
-
-      mainPanel.querySelectorAll("[data-project-id]").forEach(input => {
-        input.addEventListener("change", () => {
-          const projectId = input.dataset.projectId;
-          const project = practicalProjects.find(item => item.id === projectId);
-          const current = state.projectProgress[projectId]?.checklist || [];
-          const checklist = project.checklist.map((_, index) => Boolean(current[index]));
-          checklist[Number(input.dataset.projectIndex)] = input.checked;
-          state.projectProgress[projectId] = { checklist, updatedAt: new Date().toISOString() };
-          dataStore.saveState(state);
-          render();
-          showToast("Projeto atualizado.");
-        });
-      });
-
+      mainPanel.querySelectorAll("[data-week-nav]").forEach(button => button.addEventListener("click", () => {
+        const next = addDaysISO(Number(button.dataset.weekNav), getSelectedWeekStart());
+        dataStore.setSelectedWeek(next);
+        render();
+      }));
+      mainPanel.querySelectorAll("[data-week-today]").forEach(button => button.addEventListener("click", () => {
+        dataStore.setSelectedWeek(getWeekStartISO(todayISO()));
+        render();
+      }));
+      mainPanel.querySelectorAll("[data-project-id]").forEach(input => input.addEventListener("change", () => {
+        const project = practicalProjects.find(item => item.id === input.dataset.projectId);
+        const saved = state.projectProgress[project.id]?.checklist || [];
+        const checklist = project.checklist.map((_, index) => Boolean(saved[index]));
+        checklist[Number(input.dataset.projectIndex)] = input.checked;
+        dataStore.updateProject(project.id, checklist);
+        showToast("Projeto atualizado.");
+        render();
+      }));
+      mainPanel.querySelectorAll("[data-open-project-topics]").forEach(button => button.addEventListener("click", () => {
+        renderProjectTopics(button.dataset.openProjectTopics);
+        bindGlobalEvents();
+      }));
+      mainPanel.querySelectorAll("[data-nav][data-type]").forEach(button => button.addEventListener("click", () => {
+        appView = button.dataset.nav;
+        render();
+      }));
+      mainPanel.querySelectorAll("[data-mark-reviewed]").forEach(button => button.addEventListener("click", () => {
+        dataStore.markReviewed(button.dataset.markReviewed);
+        showToast("Revisão registrada.");
+        render();
+      }));
       const exportButton = document.getElementById("exportData");
       if (exportButton) exportButton.addEventListener("click", exportBackup);
-
       const importInput = document.getElementById("importData");
       if (importInput) importInput.addEventListener("change", importBackup);
-
       const clearButton = document.getElementById("clearData");
       if (clearButton) clearButton.addEventListener("click", clearBackup);
-
-      const copyReview = mainPanel.querySelector("[data-copy-review]");
-      if (copyReview) copyReview.addEventListener("click", async () => {
-        const hint = findTopic(copyReview.dataset.copyReview).topic.reviewHint;
-        try {
-          await navigator.clipboard.writeText(hint);
-          showToast("Dica de revisão copiada.");
-        } catch {
-          showToast("Dica de revisão pronta para copiar no painel.");
-        }
+      const saveFirebaseButton = document.getElementById("saveFirebaseSettings");
+      if (saveFirebaseButton) saveFirebaseButton.addEventListener("click", saveFirebaseSettings);
+      const connectFirebaseButton = document.getElementById("connectFirebase");
+      if (connectFirebaseButton) connectFirebaseButton.addEventListener("click", async () => {
+        saveFirebaseSettings({ quiet: true });
+        const ok = await cloudStore.init();
+        showToast(ok ? "Firebase conectado." : "Confira a configuração do Firebase.");
+        render();
       });
-
+      const syncFirebaseButton = document.getElementById("syncFirebaseNow");
+      if (syncFirebaseButton) syncFirebaseButton.addEventListener("click", async () => {
+        const ok = await cloudStore.pushNow();
+        showToast(ok ? "Dados enviados ao Firebase." : "Firebase ainda não está conectado.");
+        render();
+      });
       const search = document.getElementById("topicSearch");
       if (search) search.addEventListener("input", () => renderSearchResults(search.value));
     }
 
     function bindNotesEvents() {
-      notesPanel.querySelectorAll("[data-note-tab]").forEach(button => {
-        button.addEventListener("click", () => {
-          activeNoteTab = button.dataset.noteTab;
-          renderNotes();
-          bindNotesEvents();
-        });
-      });
+      notesPanel.querySelectorAll("[data-note-tab]").forEach(button => button.addEventListener("click", () => {
+        activeNoteTab = button.dataset.noteTab;
+        state.settings.activeNoteTab = activeNoteTab;
+        dataStore.saveState(state);
+        renderNotes();
+        bindNotesEvents();
+      }));
+      const noteText = document.getElementById("noteText");
+      if (noteText) bindAutosave(noteText);
+    }
 
-      const textarea = document.getElementById("noteText");
-      if (textarea) {
-        textarea.addEventListener("input", () => {
-          clearTimeout(noteTimer);
-          noteTimer = setTimeout(() => {
-            dataStore.updateNote(selectedTopicId, textarea.dataset.noteField, textarea.value);
-            const indicator = document.getElementById("saveIndicator");
-            if (indicator) indicator.textContent = `Última atualização: ${formatDate(state.notes[selectedTopicId]?.updatedAt)}`;
-            showToast("Anotação salva automaticamente.");
-          }, 500);
-        });
-      }
+    function bindAutosave(textarea) {
+      textarea.addEventListener("input", () => {
+        clearTimeout(noteTimer);
+        noteTimer = setTimeout(() => {
+          dataStore.updateNote(textarea.dataset.topicId, textarea.dataset.noteField, textarea.value);
+          const indicator = document.getElementById("saveIndicator");
+          if (indicator) indicator.textContent = `Última atualização: ${formatDate(ensureNotes(textarea.dataset.topicId).updatedAt)}`;
+          showToast("Anotação salva automaticamente.");
+        }, 500);
+      });
+    }
+
+    function bindErrorAutosave(textarea) {
+      textarea.addEventListener("input", () => {
+        clearTimeout(noteTimer);
+        noteTimer = setTimeout(() => {
+          dataStore.updateError(textarea.dataset.topicId, textarea.dataset.errorField, textarea.value);
+          showToast("Erro registrado.");
+        }, 500);
+      });
     }
 
     function renderSearchResults(query) {
       const normalized = query.trim().toLowerCase();
       if (!normalized) return;
-      const results = getAllTopics().filter(item => `${item.trail.title} ${item.topic.title} ${item.topic.description}`.toLowerCase().includes(normalized)).slice(0, 8);
+      const topicResults = getAllTopics().filter(item => `${item.trail.title} ${item.topic.title} ${item.topic.description} ${item.topic.concepts.join(" ")}`.toLowerCase().includes(normalized)).slice(0, 10);
+      const projectResults = practicalProjects.filter(project => `${project.title} ${project.description} ${project.subjects.join(" ")}`.toLowerCase().includes(normalized)).slice(0, 6);
       mainPanel.innerHTML = `${renderTopbar("Busca")}
-        <section class="trail-layout">
-          <div class="page-title">
-            <div>
-              <h2>Resultados para ${escapeHTML(query)}</h2>
-              <p>Abra qualquer tópico encontrado para continuar estudando.</p>
-            </div>
+        <section class="page-title">
+          <div>
+            <h2>Resultados para ${escapeHTML(query)}</h2>
+            <p>Abra um tópico ou avance em um projeto relacionado.</p>
           </div>
-          <div class="topic-grid">${results.length ? results.map(item => `<button class="topic-item" data-open-topic="${item.topic.id}">
-            <span class="status-dot" style="--status-color:${getTopicStatus(item.topic.id).color}">${getTopicStatus(item.topic.id).icon}</span>
-            <span>${escapeHTML(item.trail.title)} · ${escapeHTML(item.topic.title)}</span>
-            ${statusBadge(item.topic.id)}
-          </button>`).join("") : `<div class="empty-state">Nenhum assunto encontrado.</div>`}</div>
+        </section>
+        <section class="grid">
+          <article class="card card-pad">
+            <h3 class="card-title">Tópicos</h3>
+            <div class="grid">${topicResults.length ? topicResults.map(renderMiniTopic).join("") : `<div class="empty-state">Nenhum tópico encontrado.</div>`}</div>
+          </article>
+          <article class="card card-pad">
+            <h3 class="card-title">Projetos</h3>
+            <div class="grid">${projectResults.length ? projectResults.map(renderMiniProject).join("") : `<div class="empty-state">Nenhum projeto encontrado.</div>`}</div>
+          </article>
         </section>`;
-      bindMainEvents();
+      bindGlobalEvents();
       const input = document.getElementById("topicSearch");
       if (input) {
         input.value = query;
@@ -1827,17 +2957,24 @@
 
     function openTopic(topicId) {
       selectedTopicId = topicId;
-      const found = findTopic(topicId);
-      selectedTrailId = found.trail.id;
+      selectedTrailId = findTopic(topicId).trail.id;
       appView = "topic";
       dataStore.setLastTopic(topicId);
       render();
     }
 
+    function openFocus(topicId) {
+      selectedTopicId = topicId;
+      selectedTrailId = findTopic(topicId).trail.id;
+      appView = "focus";
+      dataStore.setLastTopic(topicId);
+      render();
+    }
+
     function nextAction(topicId) {
-      const checklist = getChecklist(topicId);
+      const checklist = ensureProgress(topicId).checklist;
       const index = checklist.findIndex(item => !item);
-      return index >= 0 ? CHECKLIST_ITEMS[index] : "Revisar e aplicar em outro projeto";
+      return index >= 0 ? CHECKLIST_ITEMS[index] : "Revisar e aplicar novamente";
     }
 
     function exportBackup() {
@@ -1845,7 +2982,7 @@
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = `code-wine-backup-${new Date().toISOString().slice(0, 10)}.json`;
+      link.download = `code-wine-backup-${todayISO()}.json`;
       link.click();
       URL.revokeObjectURL(url);
       showToast("Backup exportado.");
@@ -1857,10 +2994,12 @@
       const reader = new FileReader();
       reader.onload = () => {
         try {
-          dataStore.importData(JSON.parse(reader.result));
-          selectedTopicId = state.lastTopicId || getAllTopics()[0].topic.id;
-          render();
+          const data = JSON.parse(reader.result);
+          if (!("progress" in data || "notes" in data || "weeklyPlan" in data)) throw new Error("Formato inválido");
+          dataStore.importData(data);
+          selectedTopicId = state.lastTopicId || selectedTopicId;
           showToast("Backup importado com sucesso.");
+          render();
         } catch {
           showToast("Não foi possível importar esse arquivo.");
         }
@@ -1870,17 +3009,169 @@
     }
 
     function clearBackup() {
-      const confirmed = confirm("Tem certeza que deseja apagar todos os dados salvos do Code Wine?");
+      const confirmed = confirm("Tem certeza que deseja apagar todos os dados locais do Code Wine? Essa ação limpa progresso, notas, erros, revisões, semana e projetos.");
       if (!confirmed) return;
-      state = structuredClone(defaultState);
-      dataStore.saveState(state);
-      selectedTopicId = getAllTopics()[0].topic.id;
+      dataStore.clear();
+      selectedTopicId = state.lastTopicId;
       appView = "dashboard";
-      render();
       showToast("Dados limpos.");
+      render();
+    }
+
+    function getFirebaseSettings() {
+      const saved = state.settings.firebase || {};
+      const parsed = parseFirebaseConfig(saved.configText);
+      return {
+        enabled: Boolean(saved.enabled),
+        configText: saved.configText || "",
+        config: { ...FIREBASE_CONFIG, ...parsed },
+        workspaceId: sanitizeFirebaseId(saved.workspaceId || "code-wine-main", "code-wine-main"),
+        collectionName: sanitizeFirebaseId(saved.collectionName || "codeWineWorkspaces", "codeWineWorkspaces"),
+        status: saved.status || "Salvando apenas neste navegador."
+      };
+    }
+
+    function saveFirebaseSettings(options = {}) {
+      const enabled = Boolean(document.getElementById("firebaseEnabled")?.checked);
+      const configText = document.getElementById("firebaseConfigText")?.value || "";
+      const collectionName = sanitizeFirebaseId(document.getElementById("firebaseCollection")?.value || "codeWineWorkspaces", "codeWineWorkspaces");
+      const workspaceId = sanitizeFirebaseId(document.getElementById("firebaseWorkspace")?.value || "code-wine-main", "code-wine-main");
+      const previousStatus = state.settings.firebase?.status || "Configuração salva.";
+      state.settings.firebase = {
+        enabled,
+        configText,
+        collectionName,
+        workspaceId,
+        status: enabled ? previousStatus : "Firebase desativado. Salvando apenas neste navegador."
+      };
+      dataStore.saveState(state);
+      if (!options.quiet) {
+        showToast("Configuração Firebase salva.");
+        render();
+      }
+    }
+
+    function parseFirebaseConfig(configText) {
+      const raw = (configText || "").trim();
+      if (!raw) return {};
+      try {
+        const objectText = raw.includes("{") ? raw.slice(raw.indexOf("{"), raw.lastIndexOf("}") + 1) : raw;
+        return Function(`"use strict"; return (${objectText});`)();
+      } catch {
+        return {};
+      }
+    }
+
+    function hasFirebaseConfig(config) {
+      return Boolean(config?.apiKey && config?.projectId && config?.appId);
+    }
+
+    function sanitizeFirebaseId(value, fallback = "code-wine-main") {
+      return String(value || "")
+        .trim()
+        .replace(/[^\w.-]/g, "-")
+        .replace(/-+/g, "-")
+        .replace(/^-|-$/g, "") || fallback;
+    }
+
+    function summarizeError(error) {
+      return [error.tried, error.happened, error.resolved, error.nextTime].filter(Boolean).join("\n\n");
+    }
+
+    function ensureWeekPlan(weekKey = getSelectedWeekKey()) {
+      state.weeklyPlan[weekKey] = state.weeklyPlan[weekKey] || {};
+      state.weeklyPlan[weekKey].days = state.weeklyPlan[weekKey].days || {};
+      state.weeklyPlan[weekKey].weekKey = weekKey;
+      state.weeklyPlan[weekKey].weekStart = state.weeklyPlan[weekKey].weekStart || getSelectedWeekStart();
+      return state.weeklyPlan[weekKey];
+    }
+
+    function getSelectedWeekStart() {
+      const selected = state.settings.selectedWeekStart || getWeekStartISO(todayISO());
+      state.settings.selectedWeekStart = selected;
+      return selected;
+    }
+
+    function getSelectedWeekKey() {
+      return getWeekKeyFromDate(getSelectedWeekStart());
+    }
+
+    function todayISO() {
+      return new Date().toISOString().slice(0, 10);
+    }
+
+    function nowISO() {
+      return new Date().toISOString();
+    }
+
+    function addDaysISO(days, base = todayISO()) {
+      const date = new Date(`${base}T12:00:00`);
+      date.setDate(date.getDate() + days);
+      return date.toISOString().slice(0, 10);
+    }
+
+    function formatDate(value) {
+      if (!value) return "sem registro";
+      const date = new Date(value.length === 10 ? `${value}T12:00:00` : value);
+      if (Number.isNaN(date.getTime())) return "sem registro";
+      return date.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" });
+    }
+
+    function getWeekKey() {
+      return getWeekKeyFromDate(todayISO());
+    }
+
+    function getWeekKeyFromDate(value) {
+      const date = new Date(`${getWeekStartISO(value)}T12:00:00`);
+      const first = new Date(date.getFullYear(), 0, 1);
+      const days = Math.floor((date - first) / 86400000);
+      const week = Math.ceil((days + first.getDay() + 1) / 7);
+      return `${date.getFullYear()}-W${String(week).padStart(2, "0")}`;
+    }
+
+    function getWeekStartISO(value = todayISO()) {
+      const date = new Date(`${value}T12:00:00`);
+      const day = date.getDay();
+      const monday = new Date(date);
+      monday.setDate(date.getDate() - ((day + 6) % 7));
+      return monday.toISOString().slice(0, 10);
+    }
+
+    function getCurrentWeekDays(weekStart = getWeekStartISO(todayISO())) {
+      const monday = new Date(`${weekStart}T12:00:00`);
+      return Array.from({ length: 7 }, (_, index) => {
+        const item = new Date(monday);
+        item.setDate(monday.getDate() + index);
+        return item.toISOString().slice(0, 10);
+      });
+    }
+
+    function getWeekRangeLabel(weekStart) {
+      const days = getCurrentWeekDays(weekStart);
+      return `${formatDate(days[0])} a ${formatDate(days[6])}`;
+    }
+
+    function escapeHTML(value) {
+      return String(value ?? "").replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      })[char]);
+    }
+
+    function showToast(message) {
+      clearTimeout(toastTimer);
+      toast.textContent = message;
+      toast.classList.add("show");
+      toastTimer = setTimeout(() => toast.classList.remove("show"), 1800);
     }
 
     render();
+    if (getFirebaseSettings().enabled) {
+      cloudStore.init({ silent: true });
+    }
   </script>
 </body>
 </html>
