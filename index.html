@@ -1,0 +1,1886 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Code Wine</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #16063a;
+      --bg-deep: #0b0320;
+      --sidebar: #12132d;
+      --card: #232647;
+      --card-soft: #1b1e3a;
+      --line: rgba(211, 80, 255, .38);
+      --line-strong: rgba(211, 80, 255, .78);
+      --purple: #bc13fe;
+      --green: #00ff9f;
+      --blue: #00b8ff;
+      --magenta: #ff0055;
+      --yellow: #f7ff00;
+      --text: #ffffff;
+      --muted: #c7c5da;
+      --muted-2: #e1def2;
+      --shadow-purple: 0 0 28px rgba(188, 19, 254, .34);
+      --shadow-green: 0 0 22px rgba(0, 255, 159, .26);
+      --radius: 8px;
+      --gap: clamp(10px, 1.1vw, 16px);
+      color-scheme: dark;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      height: 100%;
+      background: var(--bg-deep);
+    }
+
+    body {
+      min-height: 100%;
+      margin: 0;
+      font-family: "Open Sans", system-ui, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 18% 10%, rgba(188, 19, 254, .28), transparent 25rem),
+        radial-gradient(circle at 82% 24%, rgba(0, 184, 255, .22), transparent 28rem),
+        radial-gradient(circle at 58% 88%, rgba(0, 255, 159, .1), transparent 22rem),
+        linear-gradient(135deg, #10052d 0%, var(--bg) 48%, #13052d 100%);
+      overflow: hidden;
+    }
+
+    button,
+    input,
+    textarea {
+      font: inherit;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: #d2cee4;
+      opacity: 1;
+    }
+
+    button {
+      border: 0;
+      color: inherit;
+      cursor: pointer;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .app-shell {
+      display: grid;
+      grid-template-columns: clamp(220px, 18vw, 280px) minmax(0, 1fr) clamp(320px, 26vw, 420px);
+      height: 100vh;
+      gap: var(--gap);
+      padding: var(--gap);
+    }
+
+    .sidebar,
+    .main-panel,
+    .notes-panel {
+      min-height: 0;
+      overflow-y: auto;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(24, 25, 54, .97), rgba(14, 10, 39, .95));
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .06), var(--shadow-purple);
+      scrollbar-width: thin;
+      scrollbar-color: rgba(188, 19, 254, .7) rgba(255, 255, 255, .06);
+    }
+
+    .main-panel:focus {
+      outline: none;
+    }
+
+    .sidebar {
+      padding: clamp(16px, 1.4vw, 22px);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .main-panel {
+      padding: clamp(16px, 1.5vw, 24px);
+    }
+
+    .notes-panel {
+      padding: clamp(14px, 1.3vw, 20px);
+    }
+
+    .brand {
+      display: grid;
+      gap: 12px;
+    }
+
+    .brand-mark {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .wine-icon {
+      width: 44px;
+      height: 54px;
+      filter: drop-shadow(0 0 10px rgba(255, 0, 85, .55));
+    }
+
+    .brand h1,
+    .page-title h2,
+    .card-title,
+    .metric-value,
+    .track-title,
+    .topic-title,
+    .project-title {
+      font-family: "Open Sans", system-ui, sans-serif;
+      letter-spacing: 0;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: clamp(1.05rem, 1.45vw, 1.35rem);
+      color: #fff;
+      text-shadow: 0 0 16px rgba(255, 0, 85, .78);
+    }
+
+    .brand p {
+      margin: 0;
+      color: var(--muted-2);
+      line-height: 1.35;
+      max-width: 18rem;
+      font-weight: 500;
+    }
+
+    .nav-list,
+    .module-list,
+    .lesson-list,
+    .check-list,
+    .concept-list,
+    .project-checklist {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .nav-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .nav-button {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 28px 1fr auto;
+      align-items: center;
+      gap: 10px;
+      min-height: 44px;
+      padding: 9px 10px;
+      border: 1px solid transparent;
+      border-radius: 7px;
+      background: transparent;
+      color: var(--muted-2);
+      text-align: left;
+      font-weight: 600;
+      transition: border-color .18s ease, background .18s ease, transform .18s ease, color .18s ease;
+    }
+
+    .nav-button:hover,
+    .nav-button.active {
+      border-color: var(--line-strong);
+      background: linear-gradient(90deg, rgba(188, 19, 254, .24), rgba(255, 0, 85, .08));
+      color: #fff;
+      transform: translateX(2px);
+    }
+
+    .nav-icon {
+      display: grid;
+      place-items: center;
+      width: 28px;
+      height: 28px;
+      border: 1px solid rgba(255, 255, 255, .12);
+      border-radius: 6px;
+      color: var(--purple);
+      background: rgba(255, 255, 255, .075);
+    }
+
+    .nav-percent {
+      font-size: .78rem;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding: 12px;
+      border: 1px solid rgba(0, 255, 159, .18);
+      border-radius: var(--radius);
+      background: rgba(0, 255, 159, .075);
+      color: var(--muted-2);
+      line-height: 1.35;
+    }
+
+    .sidebar-footer strong {
+      color: var(--green);
+      font-weight: 700;
+    }
+
+    .topbar,
+    .page-title,
+    .card-head,
+    .topic-head,
+    .notes-head,
+    .backup-actions,
+    .action-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .topbar {
+      margin-bottom: clamp(14px, 1.3vw, 20px);
+    }
+
+    .breadcrumb {
+      color: var(--muted);
+      font-size: clamp(.9rem, .9vw, 1rem);
+      font-weight: 600;
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: min(280px, 38vw);
+      padding: 8px 10px;
+      border: 1px solid rgba(255, 255, 255, .16);
+      border-radius: 7px;
+      background: rgba(255, 255, 255, .075);
+      color: var(--muted);
+    }
+
+    .search-box input {
+      width: 100%;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .page-title {
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+
+    .page-title h2 {
+      margin: 0 0 6px;
+      font-size: clamp(1.35rem, 2.1vw, 2.2rem);
+    }
+
+    .page-title p {
+      margin: 0;
+      color: var(--muted-2);
+      max-width: 72ch;
+      line-height: 1.45;
+      font-weight: 500;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      gap: var(--gap);
+    }
+
+    .card {
+      border: 1px solid rgba(188, 19, 254, .22);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(36, 39, 76, .92), rgba(25, 20, 56, .9));
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .055);
+    }
+
+    .card-pad {
+      padding: clamp(14px, 1.25vw, 18px);
+    }
+
+    .card:hover {
+      border-color: rgba(188, 19, 254, .52);
+    }
+
+    .span-7 {
+      grid-column: span 7;
+    }
+
+    .span-5 {
+      grid-column: span 5;
+    }
+
+    .span-4 {
+      grid-column: span 4;
+    }
+
+    .span-3 {
+      grid-column: span 3;
+    }
+
+    .card-title {
+      margin: 0;
+      font-size: .92rem;
+      color: #fff;
+    }
+
+    .progress-summary {
+      display: grid;
+      grid-template-columns: 150px 1fr;
+      align-items: center;
+      gap: 22px;
+      margin-top: 12px;
+    }
+
+    .progress-ring {
+      --value: 0deg;
+      width: clamp(116px, 11vw, 150px);
+      aspect-ratio: 1;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle, #111225 0 55%, transparent 56%),
+        conic-gradient(var(--green) var(--value), rgba(255, 255, 255, .11) 0);
+      box-shadow: var(--shadow-green);
+    }
+
+    .metric-value {
+      font-size: clamp(1.75rem, 2.7vw, 3rem);
+      font-weight: 800;
+    }
+
+    .metric-list {
+      display: grid;
+      gap: 8px;
+      color: var(--muted-2);
+      font-weight: 500;
+    }
+
+    .metric-list strong {
+      color: #fff;
+      font-size: 1.05rem;
+    }
+
+    .continue-card {
+      display: grid;
+      gap: 16px;
+      min-height: 100%;
+    }
+
+    .focus-box {
+      padding: 16px;
+      border: 1px solid rgba(255, 0, 85, .46);
+      border-radius: var(--radius);
+      background: linear-gradient(135deg, rgba(255, 0, 85, .2), rgba(188, 19, 254, .16));
+    }
+
+    .focus-box h3 {
+      margin: 0 0 4px;
+      font-family: "Open Sans", system-ui, sans-serif;
+      font-size: clamp(1rem, 1.2vw, 1.25rem);
+    }
+
+    .focus-box p {
+      margin: 0;
+      color: var(--muted-2);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      min-height: 38px;
+      padding: 9px 14px;
+      border: 1px solid rgba(188, 19, 254, .72);
+      border-radius: 6px;
+      background: linear-gradient(90deg, rgba(188, 19, 254, .62), rgba(255, 0, 85, .45));
+      color: #fff;
+      font-family: "Open Sans", system-ui, sans-serif;
+      font-size: .78rem;
+      text-transform: uppercase;
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      border-color: rgba(255, 0, 85, .9);
+      box-shadow: 0 0 20px rgba(188, 19, 254, .28);
+    }
+
+    .btn.secondary {
+      border-color: rgba(0, 184, 255, .72);
+      background: rgba(0, 184, 255, .15);
+    }
+
+    .btn.ghost {
+      border-color: rgba(255, 255, 255, .12);
+      background: rgba(255, 255, 255, .08);
+    }
+
+    .btn.danger {
+      border-color: rgba(255, 0, 85, .78);
+      background: rgba(255, 0, 85, .17);
+    }
+
+    .track-grid,
+    .topic-grid,
+    .project-grid,
+    .lesson-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: var(--gap);
+    }
+
+    .track-card {
+      padding: 14px;
+      border: 1px solid rgba(255, 255, 255, .16);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, .065);
+      transition: transform .18s ease, border-color .18s ease;
+    }
+
+    .track-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--track-color);
+    }
+
+    .track-card button {
+      width: 100%;
+      background: transparent;
+      text-align: left;
+    }
+
+    .track-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .track-icon {
+      display: grid;
+      place-items: center;
+      width: 40px;
+      height: 40px;
+      border: 1px solid var(--track-color);
+      border-radius: 8px;
+      color: var(--track-color);
+      font-family: "Open Sans", system-ui, sans-serif;
+      box-shadow: 0 0 14px color-mix(in srgb, var(--track-color) 36%, transparent);
+    }
+
+    .track-title {
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    .track-desc,
+    .topic-desc,
+    .lesson-meta,
+    .project-meta {
+      color: var(--muted-2);
+      line-height: 1.38;
+      font-weight: 500;
+    }
+
+    .progress-bar {
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .16);
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0;
+      border-radius: inherit;
+      background: var(--fill-color, var(--green));
+      box-shadow: 0 0 12px var(--fill-color, var(--green));
+      transition: width .25s ease;
+    }
+
+    .small-stack {
+      display: grid;
+      gap: 10px;
+    }
+
+    .today-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .mini-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, .13);
+    }
+
+    .mini-row:last-child {
+      border-bottom: 0;
+    }
+
+    .mini-row strong {
+      color: #fff;
+    }
+
+    .mini-row span,
+    .mini-row small {
+      color: var(--muted-2);
+      font-weight: 500;
+    }
+
+    .trail-layout,
+    .topic-layout,
+    .backup-layout {
+      display: grid;
+      gap: var(--gap);
+    }
+
+    .module-card {
+      padding: 14px;
+      margin-bottom: var(--gap);
+      border: 1px solid rgba(255, 255, 255, .16);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, .065);
+    }
+
+    .module-head {
+      display: grid;
+      gap: 4px;
+      margin-bottom: 12px;
+    }
+
+    .module-head h3 {
+      margin: 0;
+      font-family: "Open Sans", system-ui, sans-serif;
+      font-size: .98rem;
+    }
+
+    .module-head p {
+      margin: 0;
+      color: var(--muted-2);
+      font-weight: 500;
+    }
+
+    .topic-item {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 34px 1fr auto;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 10px;
+      border: 1px solid transparent;
+      border-radius: 7px;
+      background: rgba(255, 255, 255, .065);
+      text-align: left;
+      transition: border-color .18s ease, background .18s ease, transform .18s ease;
+    }
+
+    .topic-item + .topic-item {
+      margin-top: 8px;
+    }
+
+    .topic-item:hover,
+    .topic-item.active {
+      border-color: rgba(0, 184, 255, .5);
+      background: rgba(0, 184, 255, .065);
+      transform: translateX(2px);
+    }
+
+    .status-dot {
+      display: grid;
+      place-items: center;
+      width: 24px;
+      height: 24px;
+      border: 1px solid currentColor;
+      border-radius: 50%;
+      font-size: .8rem;
+      color: var(--status-color);
+    }
+
+    .status-badge {
+      padding: 4px 8px;
+      border: 1px solid currentColor;
+      border-radius: 999px;
+      color: var(--status-color);
+      background: color-mix(in srgb, var(--status-color) 10%, transparent);
+      font-size: .76rem;
+      white-space: nowrap;
+    }
+
+    .topic-hero {
+      display: grid;
+      gap: 12px;
+      padding: clamp(16px, 1.4vw, 22px);
+      border: 1px solid rgba(188, 19, 254, .32);
+      border-radius: var(--radius);
+      background:
+        linear-gradient(135deg, rgba(188, 19, 254, .14), rgba(0, 184, 255, .06)),
+        rgba(255, 255, 255, .065);
+    }
+
+    .topic-title {
+      margin: 0;
+      font-size: clamp(1.35rem, 2vw, 2.05rem);
+    }
+
+    .concept-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .concept-list li,
+    .tag {
+      padding: 5px 8px;
+      border: 1px solid rgba(0, 255, 159, .28);
+      border-radius: 999px;
+      background: rgba(0, 255, 159, .095);
+      color: #d7fff1;
+      font-family: "Open Sans", system-ui, sans-serif;
+      font-size: .78rem;
+    }
+
+    .lesson-card,
+    .project-card {
+      padding: 14px;
+      border: 1px solid rgba(255, 255, 255, .16);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, .065);
+    }
+
+    .lesson-card h4,
+    .project-card h3 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+    }
+
+    .lesson-meta {
+      display: grid;
+      gap: 4px;
+      margin-bottom: 12px;
+    }
+
+    .check-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .check-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 10px;
+      border: 1px solid rgba(255, 255, 255, .16);
+      border-radius: 7px;
+      background: rgba(255, 255, 255, .065);
+      color: var(--muted-2);
+    }
+
+    .check-item input {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--green);
+    }
+
+    .practice-box {
+      padding: 14px;
+      border: 1px solid rgba(247, 255, 0, .22);
+      border-radius: var(--radius);
+      background: rgba(247, 255, 0, .075);
+    }
+
+    .practice-box h3 {
+      margin: 0 0 8px;
+      font-family: "Open Sans", system-ui, sans-serif;
+      font-size: .95rem;
+      color: var(--yellow);
+    }
+
+    .practice-box p {
+      margin: 0;
+      color: var(--muted-2);
+      line-height: 1.42;
+      font-weight: 500;
+    }
+
+    .notes-empty {
+      min-height: 100%;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      color: var(--muted-2);
+      font-weight: 500;
+    }
+
+    .notes-title {
+      display: grid;
+      gap: 6px;
+    }
+
+    .notes-title h2 {
+      margin: 0;
+      font-family: "Open Sans", system-ui, sans-serif;
+      font-size: clamp(1rem, 1.35vw, 1.35rem);
+    }
+
+    .notes-tabs {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 6px;
+      margin: 16px 0 12px;
+    }
+
+    .tab-button {
+      min-height: 36px;
+      padding: 8px;
+      border: 1px solid rgba(255, 255, 255, .16);
+      border-radius: 6px;
+      background: rgba(255, 255, 255, .065);
+      color: var(--muted-2);
+      font-size: .86rem;
+      font-weight: 600;
+    }
+
+    .tab-button.active {
+      border-color: rgba(188, 19, 254, .7);
+      color: #fff;
+      background: rgba(188, 19, 254, .28);
+    }
+
+    .note-editor {
+      display: grid;
+      gap: 10px;
+    }
+
+    .note-editor label {
+      color: var(--muted-2);
+      font-weight: 600;
+    }
+
+    .note-editor textarea {
+      width: 100%;
+      min-height: clamp(320px, 55vh, 680px);
+      resize: vertical;
+      border: 1px solid rgba(0, 255, 159, .38);
+      border-radius: var(--radius);
+      outline: 0;
+      padding: 14px;
+      background:
+        linear-gradient(rgba(0, 255, 159, .035) 1px, transparent 1px),
+        rgba(8, 19, 34, .92);
+      background-size: 100% 30px;
+      color: #ffffff;
+      font-family: "Open Sans", system-ui, sans-serif;
+      line-height: 1.72;
+      box-shadow: inset 0 0 24px rgba(0, 255, 159, .09);
+    }
+
+    .save-line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      color: var(--muted);
+      font-size: .86rem;
+      font-weight: 600;
+    }
+
+    .terminal-tip {
+      margin-top: 12px;
+      padding: 12px;
+      border: 1px solid rgba(0, 255, 159, .15);
+      border-radius: var(--radius);
+      background: rgba(0, 255, 159, .08);
+      color: #c9ffec;
+      font-family: "Open Sans", system-ui, sans-serif;
+      font-size: .82rem;
+      line-height: 1.55;
+    }
+
+    .backup-card {
+      padding: clamp(16px, 1.4vw, 22px);
+      display: grid;
+      gap: 14px;
+    }
+
+    .backup-card h3 {
+      margin: 0;
+      font-family: "Open Sans", system-ui, sans-serif;
+    }
+
+    .backup-card p {
+      margin: 0;
+      color: var(--muted-2);
+      line-height: 1.45;
+      font-weight: 500;
+    }
+
+    .import-input {
+      position: absolute;
+      inline-size: 1px;
+      block-size: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+    }
+
+    .project-card {
+      display: grid;
+      gap: 12px;
+    }
+
+    .project-title {
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    .project-checklist {
+      display: grid;
+      gap: 7px;
+    }
+
+    .project-checklist label {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      color: var(--muted-2);
+      font-weight: 500;
+    }
+
+    .project-checklist input {
+      accent-color: var(--green);
+    }
+
+    .toast {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      z-index: 20;
+      width: min(360px, calc(100vw - 32px));
+      padding: 12px 14px;
+      border: 1px solid rgba(0, 255, 159, .45);
+      border-radius: var(--radius);
+      background: rgba(16, 24, 46, .96);
+      box-shadow: var(--shadow-green);
+      color: #eafff8;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(8px);
+      transition: opacity .2s ease, transform .2s ease;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .section-title {
+      margin: 0 0 12px;
+      font-family: "Open Sans", system-ui, sans-serif;
+      font-size: .95rem;
+    }
+
+    .empty-state {
+      padding: 18px;
+      border: 1px dashed rgba(255, 255, 255, .16);
+      border-radius: var(--radius);
+      color: var(--muted-2);
+      text-align: center;
+      font-weight: 500;
+    }
+
+    @media (max-width: 1180px) {
+      .app-shell {
+        grid-template-columns: 210px minmax(0, 1fr) 330px;
+        gap: 10px;
+        padding: 10px;
+      }
+
+      .main-panel,
+      .notes-panel,
+      .sidebar {
+        padding: 14px;
+      }
+
+      .span-7,
+      .span-5,
+      .span-4,
+      .span-3 {
+        grid-column: span 6;
+      }
+
+      .progress-summary {
+        grid-template-columns: 120px 1fr;
+      }
+    }
+
+    @media (max-width: 900px) {
+      body {
+        overflow: auto;
+      }
+
+      .app-shell {
+        min-height: 100vh;
+        height: auto;
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar,
+      .main-panel,
+      .notes-panel {
+        overflow: visible;
+      }
+
+      .nav-list {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      }
+
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .span-7,
+      .span-5,
+      .span-4,
+      .span-3 {
+        grid-column: auto;
+      }
+
+      .topbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .search-box {
+        min-width: 0;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .progress-summary {
+        grid-template-columns: 1fr;
+        justify-items: center;
+        text-align: center;
+      }
+
+      .topic-item {
+        grid-template-columns: 30px 1fr;
+      }
+
+      .topic-item .status-badge {
+        grid-column: 2;
+        justify-self: start;
+      }
+
+      .backup-actions,
+      .action-row,
+      .page-title {
+        flex-direction: column;
+        align-items: stretch;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Navegação principal">
+      <div class="brand">
+        <div class="brand-mark">
+          <svg class="wine-icon" viewBox="0 0 72 96" role="img" aria-label="Taça Code Wine">
+            <path d="M18 6h36l8 31c2 18-9 32-26 32S8 55 10 37L18 6Z" fill="none" stroke="#ff4ed8" stroke-width="3"/>
+            <path d="M27 27 18 36l9 9M45 27l9 9-9 9M39 24 32 48" fill="none" stroke="#bc13fe" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M36 69v17M22 90h28" fill="none" stroke="#ff4ed8" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+          <div>
+            <h1>Code Wine</h1>
+            <p>Sua adega de estudos em programação</p>
+          </div>
+        </div>
+      </div>
+      <nav>
+        <ul class="nav-list" id="navList"></ul>
+      </nav>
+      <div class="sidebar-footer">
+        <strong>Ritual diário</strong><br>
+        Escolha um tópico, pratique com calma e registre o que ficou vivo no seu código.
+      </div>
+    </aside>
+
+    <main class="main-panel" id="mainPanel" tabindex="-1"></main>
+
+    <aside class="notes-panel" id="notesPanel" aria-label="Painel de anotações"></aside>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const CHECKLIST_ITEMS = [
+      "Assisti à aula",
+      "Fiz anotação do que entendi",
+      "Pratiquei no VS Code",
+      "Consigo explicar com minhas palavras",
+      "Apliquei em um projeto"
+    ];
+
+    const resources = {
+      cursoVideo: "https://www.youtube.com/playlist?list=PLHz_AreHm4dkZ9-atkcmcBaMZdmLHft8n",
+      rocketseat: "https://www.rocketseat.com.br/discover",
+      freeCodeCampCss: "https://www.freecodecamp.org/learn/2022/responsive-web-design",
+      freeCodeCampJs: "https://www.freecodecamp.org/learn/javascript-algorithms-and-data-structures-v8",
+      mdn: "https://developer.mozilla.org/en-US/docs/Learn_web_development",
+      jsInfo: "https://javascript.info/",
+      odin: "https://www.theodinproject.com/paths/foundations/courses/foundations"
+    };
+
+    function lesson(title, source, type, url, estimatedTime) {
+      return { title, source, type, url, estimatedTime };
+    }
+
+    function topic(id, title, objective, description, mainConcepts, lessons, projectTask, reviewHint) {
+      return { id, title, objective, description, mainConcepts, lessons, projectTask, reviewHint };
+    }
+
+    const curriculum = [
+      {
+        id: "html",
+        title: "HTML",
+        short: "HTML",
+        icon: "H5",
+        description: "Estruture páginas claras, acessíveis e preparadas para crescer com conteúdo bem organizado.",
+        color: "#ff3f6c",
+        modules: [
+          {
+            id: "html-fundamentos",
+            title: "Módulo 1, fundamentos",
+            description: "A base semântica para qualquer página profissional.",
+            topics: [
+              topic("html-estrutura-basica", "Estrutura básica de uma página", "Entender a anatomia essencial de um documento HTML.", "Aprenda a criar uma página com doctype, html, head, body, metadados e título.", ["doctype", "html", "head", "body", "meta"], [lesson("Curso em Vídeo HTML5 e CSS3", "Curso em Vídeo", "Aula principal", resources.cursoVideo, "35 min"), lesson("MDN, estrutura de documentos HTML", "MDN", "Referência", resources.mdn, "25 min")], "Crie um arquivo HTML com título, descrição e uma pequena apresentação pessoal.", "Revisar a função de cada parte do documento antes de criar novas páginas."),
+              topic("html-tags-texto", "Tags de texto", "Usar hierarquia textual com intenção e clareza.", "Organize títulos, parágrafos, listas, ênfases e citações para melhorar leitura e acessibilidade.", ["h1 a h6", "p", "strong", "em", "ul", "ol"], [lesson("Rocketseat Discover, HTML semântico", "Rocketseat", "Aula principal", resources.rocketseat, "30 min"), lesson("freeCodeCamp, Cat Photo App", "freeCodeCamp", "Exercício prático", resources.freeCodeCampCss, "40 min")], "Monte uma seção de artigo com título, subtítulo, parágrafos, lista e uma chamada final.", "Ler em voz alta a página e conferir se a hierarquia faz sentido."),
+              topic("html-imagens-links", "Imagens e links", "Inserir mídia e navegação com boas práticas.", "Use imagens, textos alternativos, links internos, links externos e navegação básica entre páginas.", ["img", "alt", "a", "target", "href"], [lesson("Curso em Vídeo, imagens e links", "Curso em Vídeo", "Aula principal", resources.cursoVideo, "34 min"), lesson("MDN, imagens e links", "MDN", "Referência", resources.mdn, "22 min")], "Crie uma galeria simples com três imagens e links para materiais de estudo.", "Verificar se todos os links abrem corretamente e se as imagens têm texto alternativo."),
+              topic("html-semantico", "HTML semântico", "Estruturar páginas com significado, não apenas aparência.", "Use tags semânticas para deixar o conteúdo mais compreensível para pessoas, navegadores e buscadores.", ["header", "main", "section", "article", "aside", "footer", "nav"], [lesson("Curso em Vídeo, HTML semântico", "Curso em Vídeo", "Aula principal", resources.cursoVideo, "32 min"), lesson("MDN, semântica HTML", "MDN", "Referência", resources.mdn, "28 min")], "Reescreva uma página simples usando header, main, section, article e footer.", "Explicar por que cada bloco recebeu aquela tag."),
+              topic("html-formularios", "Formulários e inputs", "Coletar dados com campos bem nomeados e acessíveis.", "Aprenda labels, inputs, tipos de campo, textarea, select e botões de envio.", ["form", "label", "input", "textarea", "select", "button"], [lesson("freeCodeCamp, formulários", "freeCodeCamp", "Exercício prático", resources.freeCodeCampCss, "45 min"), lesson("MDN, formulários HTML", "MDN", "Referência", resources.mdn, "30 min")], "Crie um formulário de contato para uma página pessoal de desenvolvedor.", "Conferir se cada campo tem label e se o formulário é fácil de preencher."),
+              topic("html-projeto-pessoal", "Projeto, página pessoal de desenvolvedor", "Conectar os fundamentos em uma página real.", "Crie uma página de apresentação com conteúdo, imagem, links, seções semânticas e formulário simples.", ["estrutura", "semântica", "links", "formulário", "conteúdo"], [lesson("The Odin Project, Foundations", "The Odin Project", "Projeto guiado", resources.odin, "60 min"), lesson("Rocketseat Discover, projeto inicial", "Rocketseat", "Prática", resources.rocketseat, "50 min")], "Publicar a primeira versão local de uma página pessoal completa.", "Revisar a página como se fosse o primeiro item do portfólio.")
+            ]
+          }
+        ]
+      },
+      {
+        id: "css",
+        title: "CSS",
+        short: "CSS",
+        icon: "C3",
+        description: "Transforme estrutura em interface com cor, ritmo, espaço, responsividade e composição.",
+        color: "#00b8ff",
+        modules: [
+          {
+            id: "css-fundamentos-visuais",
+            title: "Módulo 1, fundamentos visuais",
+            description: "O olhar técnico para desenhar interfaces com CSS.",
+            topics: [
+              topic("css-seletores", "Seletores e propriedades básicas", "Selecionar elementos e aplicar estilos com segurança.", "Entenda seletores, classes, ids, cascata e propriedades essenciais.", ["seletores", "classe", "id", "cascata", "propriedades"], [lesson("Curso em Vídeo, primeiros estilos", "Curso em Vídeo", "Aula principal", resources.cursoVideo, "35 min"), lesson("MDN, primeiros passos com CSS", "MDN", "Referência", resources.mdn, "25 min")], "Estilize uma página HTML usando classes claras e uma hierarquia simples.", "Revisar quais seletores ficaram reutilizáveis."),
+              topic("css-cores-fontes-espacos", "Cores, fontes e espaçamentos", "Criar identidade visual com escolhas consistentes.", "Use paleta, tipografia, line-height, margin, padding e espaçamentos para melhorar leitura.", ["color", "font-family", "line-height", "margin", "padding"], [lesson("freeCodeCamp, cores e tipografia", "freeCodeCamp", "Exercício prático", resources.freeCodeCampCss, "45 min"), lesson("Rocketseat Discover, CSS visual", "Rocketseat", "Aula principal", resources.rocketseat, "30 min")], "Defina uma paleta e aplique em título, texto, botões e fundo.", "Observar se a página continua legível sem excesso de cor."),
+              topic("css-box-model", "Box model, margin, padding e border", "Dominar a caixa invisível por trás de cada elemento.", "Entenda content, padding, border, margin e box-sizing.", ["box model", "content", "padding", "border", "margin", "box-sizing"], [lesson("MDN, box model", "MDN", "Referência", resources.mdn, "24 min"), lesson("freeCodeCamp, box model", "freeCodeCamp", "Exercício prático", resources.freeCodeCampCss, "38 min")], "Crie três cards alinhados e ajuste seus espaços internos e externos.", "Inspecionar os cards no navegador e identificar cada camada da caixa."),
+              topic("css-botoes-cards", "Botões e cards", "Criar componentes visuais reutilizáveis.", "Construa botões, cards, estados de hover e pequenas variações sem bagunçar a folha de estilo.", ["button", "card", "hover", "border-radius", "shadow"], [lesson("Rocketseat Discover, componentes", "Rocketseat", "Aula principal", resources.rocketseat, "35 min"), lesson("freeCodeCamp, design responsivo", "freeCodeCamp", "Exercício prático", resources.freeCodeCampCss, "42 min")], "Monte uma seção com cards de serviços e botões de ação.", "Avaliar se cada componente tem um papel claro na interface."),
+              topic("css-flexbox", "Flexbox", "Distribuir elementos em uma dimensão com fluidez.", "Use flex container, alinhamento, gap, wrap e distribuição de espaço.", ["display flex", "gap", "align-items", "justify-content", "flex-wrap"], [lesson("freeCodeCamp, Flexbox", "freeCodeCamp", "Exercício prático", resources.freeCodeCampCss, "50 min"), lesson("MDN, Flexbox", "MDN", "Referência", resources.mdn, "30 min")], "Crie uma barra de navegação e uma fileira responsiva de cards com Flexbox.", "Mudar a largura da janela e observar como os elementos respiram."),
+              topic("css-media-queries", "Responsividade com media queries", "Adaptar uma interface para diferentes telas.", "Use breakpoints, unidades flexíveis e ajustes de layout para notebook e celular.", ["media query", "breakpoint", "rem", "clamp", "viewport"], [lesson("Curso em Vídeo, responsividade", "Curso em Vídeo", "Aula principal", resources.cursoVideo, "40 min"), lesson("freeCodeCamp, responsive design", "freeCodeCamp", "Exercício prático", resources.freeCodeCampCss, "55 min")], "Transforme uma página desktop em uma versão confortável para celular.", "Testar em pelo menos três larguras diferentes."),
+              topic("css-grid", "CSS Grid", "Organizar layouts em linhas e colunas com precisão.", "Aprenda grid container, colunas, gap, auto-fit e minmax para telas flexíveis.", ["display grid", "grid-template-columns", "minmax", "auto-fit", "gap"], [lesson("MDN, CSS Grid", "MDN", "Referência", resources.mdn, "35 min"), lesson("freeCodeCamp, CSS Grid", "freeCodeCamp", "Exercício prático", resources.freeCodeCampCss, "50 min")], "Crie um dashboard simples usando grid responsivo.", "Comparar quando Grid é melhor que Flexbox."),
+              topic("css-projeto-hazelink", "Projeto, landing page Hazelink", "Aplicar composição visual em uma landing page real.", "Construa uma landing page com hero, benefícios, prova visual e chamada de ação.", ["layout", "hero", "cards", "responsividade", "cta"], [lesson("The Odin Project, landing page", "The Odin Project", "Projeto guiado", resources.odin, "70 min"), lesson("Rocketseat Discover, projeto visual", "Rocketseat", "Prática", resources.rocketseat, "50 min")], "Criar a primeira versão visual da landing page Hazelink.", "Revisar se a página comunica valor antes de decorar.")
+            ]
+          }
+        ]
+      },
+      {
+        id: "javascript",
+        title: "JavaScript",
+        short: "JS",
+        icon: "JS",
+        description: "Dê comportamento à interface, guarde dados no navegador e crie experiências interativas.",
+        color: "#f7ff00",
+        modules: [
+          {
+            id: "js-fundamentos",
+            title: "Módulo 1, fundamentos",
+            description: "A linguagem por trás das interações do front-end.",
+            topics: [
+              topic("js-let-const", "Variáveis com let e const", "Guardar valores de forma clara e previsível.", "Entenda declaração, atribuição, escopo e quando usar let ou const.", ["let", "const", "escopo", "valor", "nomeação"], [lesson("freeCodeCamp JavaScript, variáveis", "freeCodeCamp", "Exercício prático", resources.freeCodeCampJs, "45 min"), lesson("JavaScript.info, variáveis", "JavaScript.info", "Referência", resources.jsInfo, "25 min")], "Crie variáveis para representar dados de um aluno e mostre no console.", "Revisar nomes de variáveis e trocar nomes vagos por nomes melhores."),
+              topic("js-tipos-dados", "Tipos de dados", "Reconhecer textos, números, booleanos e valores especiais.", "Aprenda strings, numbers, booleans, null, undefined e conversões simples.", ["string", "number", "boolean", "null", "undefined"], [lesson("JavaScript.info, tipos", "JavaScript.info", "Referência", resources.jsInfo, "30 min"), lesson("freeCodeCamp JavaScript, tipos", "freeCodeCamp", "Exercício prático", resources.freeCodeCampJs, "45 min")], "Monte exemplos de cada tipo e teste typeof no console.", "Observar erros causados por conversão automática."),
+              topic("js-arrays-objetos", "Arrays e objetos", "Organizar listas e entidades com estrutura.", "Use arrays para coleções e objetos para dados nomeados.", ["array", "object", "property", "method", "index"], [lesson("freeCodeCamp JavaScript, arrays e objetos", "freeCodeCamp", "Exercício prático", resources.freeCodeCampJs, "55 min"), lesson("JavaScript.info, objects", "JavaScript.info", "Referência", resources.jsInfo, "35 min")], "Crie uma lista de estudos com objetos contendo título, status e tempo estimado.", "Explicar por que alguns dados viraram lista e outros viraram objeto."),
+              topic("js-condicoes", "Condições com if e else", "Tomar decisões dentro do código.", "Use comparações, if, else if, else e operadores lógicos.", ["if", "else", "comparação", "operadores lógicos", "truthy"], [lesson("JavaScript.info, condicionais", "JavaScript.info", "Referência", resources.jsInfo, "30 min"), lesson("freeCodeCamp JavaScript, condicionais", "freeCodeCamp", "Exercício prático", resources.freeCodeCampJs, "45 min")], "Crie uma função que diga o status de um tópico com base no checklist.", "Testar os casos vazio, parcial e completo."),
+              topic("js-funcoes", "Funções", "Transformar passos repetidos em ações reutilizáveis.", "Crie funções com parâmetros, retorno e nomes que contam uma intenção.", ["function", "parametro", "return", "arrow function", "reuso"], [lesson("freeCodeCamp JavaScript, funções", "freeCodeCamp", "Exercício prático", resources.freeCodeCampJs, "50 min"), lesson("JavaScript.info, funções", "JavaScript.info", "Referência", resources.jsInfo, "35 min")], "Crie funções para calcular progresso e formatar mensagens.", "Revisar se cada função faz apenas uma coisa principal."),
+              topic("js-loops", "Loops", "Percorrer listas sem repetir código manualmente.", "Use for, for of, forEach, map e filtros simples.", ["for", "for of", "forEach", "map", "filter"], [lesson("JavaScript.info, loops", "JavaScript.info", "Referência", resources.jsInfo, "32 min"), lesson("freeCodeCamp JavaScript, loops", "freeCodeCamp", "Exercício prático", resources.freeCodeCampJs, "45 min")], "Percorra uma lista de tópicos e conte quantos estão concluídos.", "Comparar loop tradicional e métodos de array."),
+              topic("js-eventos", "Eventos", "Responder às ações da pessoa usando a interface.", "Use click, input, submit e listeners para tornar a página viva.", ["event", "addEventListener", "click", "input", "submit"], [lesson("MDN, eventos", "MDN", "Referência", resources.mdn, "35 min"), lesson("Rocketseat Discover, eventos no DOM", "Rocketseat", "Aula principal", resources.rocketseat, "35 min")], "Crie botões que alteram textos e status na tela.", "Testar se a ação esperada acontece sem recarregar a página."),
+              topic("js-dom", "DOM", "Encontrar e alterar elementos na página.", "Aprenda querySelector, classList, textContent, innerHTML e criação de elementos.", ["DOM", "querySelector", "classList", "textContent", "innerHTML"], [lesson("MDN, manipulação do DOM", "MDN", "Referência", resources.mdn, "40 min"), lesson("The Odin Project, DOM manipulation", "The Odin Project", "Projeto guiado", resources.odin, "60 min")], "Renderize uma lista de tópicos a partir de um array.", "Conferir se o HTML gerado continua semântico e fácil de manter."),
+              topic("js-formularios", "Formulários com JavaScript", "Validar e capturar dados de formulários.", "Use submit, preventDefault, FormData e validações simples.", ["form", "submit", "preventDefault", "FormData", "validation"], [lesson("MDN, formulários com JavaScript", "MDN", "Referência", resources.mdn, "35 min"), lesson("freeCodeCamp JavaScript, formulários", "freeCodeCamp", "Exercício prático", resources.freeCodeCampJs, "45 min")], "Crie um formulário de agendamento que adiciona itens em uma lista.", "Testar campos vazios e mensagens de erro."),
+              topic("js-localstorage", "localStorage", "Salvar dados simples no navegador.", "Guarde progresso, preferências e anotações com JSON.stringify e JSON.parse.", ["localStorage", "JSON.stringify", "JSON.parse", "persistência", "estado"], [lesson("MDN, Web Storage API", "MDN", "Referência", resources.mdn, "30 min"), lesson("JavaScript.info, localStorage", "JavaScript.info", "Referência", resources.jsInfo, "25 min")], "Salve uma lista de estudos no navegador e recupere ao recarregar.", "Verificar se o app resiste a uma atualização da página."),
+              topic("js-projeto-agenda", "Projeto, lista de agendamentos simples", "Unir DOM, eventos, formulários e persistência.", "Crie uma agenda local para registrar clientes, horários e status.", ["DOM", "eventos", "formulário", "localStorage", "estado"], [lesson("The Odin Project, JavaScript basics", "The Odin Project", "Projeto guiado", resources.odin, "75 min"), lesson("freeCodeCamp JavaScript, projetos", "freeCodeCamp", "Exercício prático", resources.freeCodeCampJs, "65 min")], "Criar uma agenda simples para manicure com dados salvos no navegador.", "Revisar o fluxo inteiro como uma pequena aplicação real.")
+            ]
+          }
+        ]
+      },
+      {
+        id: "git",
+        title: "Git e GitHub",
+        short: "Git",
+        icon: "Git",
+        description: "Controle versões, documente evolução e publique seus projetos com mais confiança.",
+        color: "#ff0055",
+        modules: [
+          {
+            id: "git-versionamento",
+            title: "Módulo 1, versionamento",
+            description: "Os comandos essenciais para guardar a história do código.",
+            topics: [
+              topic("git-o-que-e", "O que é Git", "Entender versionamento como memória do projeto.", "Conheça repositórios, histórico, commits e por que versionar desde cedo.", ["versionamento", "repositório", "histórico", "commit"], [lesson("The Odin Project, Git basics", "The Odin Project", "Aula principal", resources.odin, "45 min"), lesson("Rocketseat Discover, Git", "Rocketseat", "Aula principal", resources.rocketseat, "35 min")], "Escreva uma explicação curta sobre por que seus projetos precisam de Git.", "Revisar a diferença entre salvar arquivo e salvar versão."),
+              topic("git-init", "git init", "Criar um repositório local.", "Aprenda a iniciar o controle de versão dentro de uma pasta de projeto.", ["git init", "repositório local", ".git"], [lesson("The Odin Project, setting up Git", "The Odin Project", "Aula principal", resources.odin, "35 min"), lesson("MDN, Git and GitHub", "MDN", "Referência", resources.mdn, "25 min")], "Inicie Git em uma pasta de teste e observe a criação do repositório.", "Verificar se você está na pasta correta antes do comando."),
+              topic("git-status", "git status", "Ler o estado atual do repositório.", "Entenda arquivos modificados, não rastreados e preparados para commit.", ["git status", "untracked", "modified", "staged"], [lesson("The Odin Project, Git workflow", "The Odin Project", "Aula principal", resources.odin, "35 min"), lesson("Rocketseat Discover, terminal e Git", "Rocketseat", "Aula principal", resources.rocketseat, "30 min")], "Modifique arquivos e use git status para interpretar cada estado.", "Ler a saída do comando antes de agir."),
+              topic("git-add", "git add", "Preparar mudanças para um commit.", "Use stage para escolher o que entra na próxima versão.", ["git add", "stage", "index", "mudança"], [lesson("The Odin Project, staging", "The Odin Project", "Aula principal", resources.odin, "35 min"), lesson("MDN, Git workflow", "MDN", "Referência", resources.mdn, "25 min")], "Prepare arquivos específicos e confira com git status.", "Evitar adicionar arquivos que não pertencem à mudança."),
+              topic("git-commit", "git commit", "Registrar uma versão com mensagem clara.", "Crie commits pequenos, descritivos e fáceis de entender depois.", ["git commit", "mensagem", "histórico", "checkpoint"], [lesson("The Odin Project, commits", "The Odin Project", "Aula principal", resources.odin, "40 min"), lesson("Rocketseat Discover, commits", "Rocketseat", "Aula principal", resources.rocketseat, "30 min")], "Faça um commit com mensagem simples e específica.", "Revisar se a mensagem explica a intenção da mudança."),
+              topic("git-github-repo", "Criar repositório no GitHub", "Levar um projeto local para a nuvem.", "Crie repositório, configure remoto e entenda origem do projeto.", ["GitHub", "repository", "remote", "origin"], [lesson("The Odin Project, GitHub", "The Odin Project", "Aula principal", resources.odin, "45 min"), lesson("MDN, GitHub basics", "MDN", "Referência", resources.mdn, "25 min")], "Crie um repositório vazio para um projeto de estudos.", "Conferir nome, descrição e visibilidade."),
+              topic("git-readme", "README", "Apresentar o projeto para outras pessoas.", "Escreva objetivo, tecnologias, como abrir e próximos passos.", ["README", "Markdown", "documentação", "instruções"], [lesson("The Odin Project, README", "The Odin Project", "Referência", resources.odin, "30 min"), lesson("freeCodeCamp, Markdown basics", "freeCodeCamp", "Exercício prático", resources.freeCodeCampCss, "25 min")], "Crie um README para sua página pessoal de desenvolvedor.", "Ler como visitante e conferir se o projeto fica compreensível."),
+              topic("git-publicar-projeto", "Publicar projeto", "Compartilhar uma versão navegável do trabalho.", "Conecte repositório, envie commits e organize a apresentação do projeto.", ["push", "GitHub Pages", "deploy", "publicação"], [lesson("The Odin Project, deployment basics", "The Odin Project", "Aula principal", resources.odin, "45 min"), lesson("Rocketseat Discover, publicar projeto", "Rocketseat", "Aula principal", resources.rocketseat, "35 min")], "Publique uma página simples e registre o link no README.", "Abrir o link publicado em uma janela anônima para validar.")
+            ]
+          }
+        ]
+      },
+      {
+        id: "projects",
+        title: "Projetos práticos",
+        short: "Projetos",
+        icon: "PX",
+        description: "Transforme estudos em peças reais de portfólio, com escopo claro e progresso visível.",
+        color: "#00ff9f",
+        modules: [
+          {
+            id: "projects-praticos",
+            title: "Módulo 1, prática guiada",
+            description: "Projetos para consolidar HTML, CSS, JavaScript e publicação.",
+            topics: [
+              topic("proj-pagina-pessoal", "Página pessoal de desenvolvedor", "Criar uma presença inicial na web.", "Página com apresentação, habilidades, projetos e contato.", ["HTML semântico", "cards", "formulário", "README"], [lesson("The Odin Project, foundations project", "The Odin Project", "Projeto guiado", resources.odin, "80 min"), lesson("Rocketseat Discover, projeto front-end", "Rocketseat", "Prática", resources.rocketseat, "55 min")], "Criar uma página pessoal com pelo menos quatro seções.", "Revisar clareza de mensagem e acabamento visual."),
+              topic("proj-hazelink", "Landing page Hazelink", "Desenhar uma página de conversão limpa.", "Landing page para comunicar benefício, prova, recursos e chamada de ação.", ["hero", "benefícios", "CTA", "responsividade"], [lesson("freeCodeCamp Responsive Web Design", "freeCodeCamp", "Exercício prático", resources.freeCodeCampCss, "70 min"), lesson("MDN, layout CSS", "MDN", "Referência", resources.mdn, "35 min")], "Construir a primeira versão responsiva da landing page.", "Revisar se o botão principal aparece sem rolar em notebook."),
+              topic("proj-barbearia", "Landing page de barbearia", "Criar uma página local com apelo visual.", "Página com serviços, horários, localização e agendamento por link.", ["seções", "cards", "mapa", "responsivo"], [lesson("Curso em Vídeo HTML5 e CSS3", "Curso em Vídeo", "Aula principal", resources.cursoVideo, "60 min"), lesson("Rocketseat Discover", "Rocketseat", "Prática", resources.rocketseat, "45 min")], "Criar landing page para uma barbearia fictícia.", "Revisar se a página inspira confiança rapidamente."),
+              topic("proj-cardapio", "Cardápio digital", "Organizar produtos em uma experiência simples.", "Cardápio com categorias, itens, preços e destaques.", ["grid", "cards", "categorias", "interface"], [lesson("freeCodeCamp Responsive Web Design", "freeCodeCamp", "Exercício prático", resources.freeCodeCampCss, "65 min"), lesson("MDN, CSS layout", "MDN", "Referência", resources.mdn, "30 min")], "Criar um cardápio digital com pelo menos três categorias.", "Revisar legibilidade de preços e nomes em telas pequenas."),
+              topic("proj-agenda-manicure", "Agenda simples para manicure", "Criar um mini app com estado local.", "Agenda com cadastro de cliente, data, horário e status salvo no navegador.", ["formulário", "DOM", "localStorage", "estado"], [lesson("freeCodeCamp JavaScript", "freeCodeCamp", "Exercício prático", resources.freeCodeCampJs, "80 min"), lesson("JavaScript.info, forms and controls", "JavaScript.info", "Referência", resources.jsInfo, "35 min")], "Criar uma agenda local com criação, edição simples e remoção.", "Testar persistência ao recarregar a página."),
+              topic("proj-portfolio", "Portfólio pessoal", "Reunir projetos em uma vitrine coerente.", "Portfólio com apresentação, projetos, tecnologias e contato.", ["portfólio", "projetos", "copy", "deploy"], [lesson("The Odin Project, portfolio path", "The Odin Project", "Projeto guiado", resources.odin, "90 min"), lesson("MDN Learn Web Development", "MDN", "Referência", resources.mdn, "45 min")], "Criar a primeira versão do portfólio com três projetos.", "Revisar se cada projeto tem contexto, imagem e link.")
+            ]
+          }
+        ]
+      }
+    ];
+
+    const practicalProjects = [
+      { id: "project-personal-page", topicId: "proj-pagina-pessoal", title: "Página pessoal de desenvolvedor", description: "Uma apresentação objetiva com identidade, habilidades, links e contato.", subjects: ["HTML", "CSS", "Git"], checklist: ["Estrutura semântica", "Seções principais", "README inicial"] },
+      { id: "project-hazelink", topicId: "proj-hazelink", title: "Landing page Hazelink", description: "Uma página de conversão para apresentar oferta, benefício e chamada de ação.", subjects: ["CSS Grid", "Responsividade", "Copy"], checklist: ["Hero claro", "Cards de benefício", "Versão notebook"] },
+      { id: "project-barber", topicId: "proj-barbearia", title: "Landing page de barbearia", description: "Uma página local com serviços, endereço, horários e agendamento.", subjects: ["HTML", "CSS", "Layout"], checklist: ["Serviços", "Contato", "Chamada para agenda"] },
+      { id: "project-menu", topicId: "proj-cardapio", title: "Cardápio digital", description: "Uma vitrine simples para organizar produtos, preços e categorias.", subjects: ["Grid", "Cards", "Design visual"], checklist: ["Categorias", "Itens e preços", "Destaques"] },
+      { id: "project-schedule", topicId: "proj-agenda-manicure", title: "Agenda simples para manicure", description: "Um app local com cadastro de horários e persistência no navegador.", subjects: ["JavaScript", "Formulários", "localStorage"], checklist: ["Cadastrar", "Salvar", "Listar agenda"] },
+      { id: "project-portfolio", topicId: "proj-portfolio", title: "Portfólio pessoal", description: "Uma vitrine dos projetos concluídos e da evolução nos estudos.", subjects: ["Projetos", "Deploy", "GitHub"], checklist: ["Página inicial", "Projetos", "Contato"] }
+    ];
+
+    const defaultState = {
+      progress: {},
+      notes: {},
+      lastTopicId: null,
+      projectProgress: {},
+      settings: { theme: "dark" }
+    };
+
+    const dataStore = {
+      key: "codeWineState.v1",
+      getState() {
+        try {
+          const saved = localStorage.getItem(this.key);
+          if (!saved) return structuredClone(defaultState);
+          return { ...structuredClone(defaultState), ...JSON.parse(saved) };
+        } catch {
+          return structuredClone(defaultState);
+        }
+      },
+      saveState(state) {
+        localStorage.setItem(this.key, JSON.stringify(state));
+      },
+      updateTopicProgress(topicId, checklist) {
+        state.progress[topicId] = state.progress[topicId] || {};
+        state.progress[topicId].checklist = checklist;
+        if (checklist.every(Boolean) && !state.progress[topicId].completedAt) {
+          state.progress[topicId].completedAt = new Date().toISOString();
+        }
+        if (!checklist.every(Boolean)) {
+          delete state.progress[topicId].completedAt;
+        }
+        this.saveState(state);
+      },
+      updateNote(topicId, field, value) {
+        state.notes[topicId] = state.notes[topicId] || {};
+        state.notes[topicId][field] = value;
+        state.notes[topicId].updatedAt = new Date().toISOString();
+        this.saveState(state);
+      },
+      setLastTopic(topicId) {
+        state.lastTopicId = topicId;
+        this.saveState(state);
+      },
+      exportData() {
+        return JSON.stringify({
+          progress: state.progress,
+          notes: state.notes,
+          lastTopicId: state.lastTopicId,
+          projectProgress: state.projectProgress,
+          settings: state.settings
+        }, null, 2);
+      },
+      importData(data) {
+        state = {
+          ...structuredClone(defaultState),
+          progress: data.progress || {},
+          notes: data.notes || {},
+          lastTopicId: data.lastTopicId || null,
+          projectProgress: data.projectProgress || {},
+          settings: data.settings || { theme: "dark" }
+        };
+        this.saveState(state);
+      }
+    };
+
+    let state = dataStore.getState();
+    let appView = "dashboard";
+    let selectedTrailId = "html";
+    let selectedTopicId = state.lastTopicId || getAllTopics()[0].topic.id;
+    let activeNoteTab = "understood";
+    let noteTimer = null;
+
+    const mainPanel = document.getElementById("mainPanel");
+    const notesPanel = document.getElementById("notesPanel");
+    const navList = document.getElementById("navList");
+    const toast = document.getElementById("toast");
+
+    function getAllTopics() {
+      return curriculum.flatMap(trail => trail.modules.flatMap(module => module.topics.map(topicItem => ({ trail, module, topic: topicItem }))));
+    }
+
+    function findTopic(topicId) {
+      return getAllTopics().find(item => item.topic.id === topicId) || getAllTopics()[0];
+    }
+
+    function findTrail(trailId) {
+      return curriculum.find(trail => trail.id === trailId) || curriculum[0];
+    }
+
+    function getChecklist(topicId) {
+      const saved = state.progress[topicId]?.checklist;
+      return CHECKLIST_ITEMS.map((_, index) => Boolean(saved?.[index]));
+    }
+
+    function getTopicStatus(topicId) {
+      const checklist = getChecklist(topicId);
+      if (checklist.every(Boolean)) return { label: "Concluído", color: "var(--green)", icon: "✓" };
+      if (checklist.some(Boolean)) return { label: "Estudando", color: "var(--blue)", icon: "›" };
+      return { label: "Não iniciado", color: "#6f7088", icon: "" };
+    }
+
+    function getTrailProgress(trailId) {
+      const trail = findTrail(trailId);
+      const topics = trail.modules.flatMap(module => module.topics);
+      const done = topics.filter(topicItem => getChecklist(topicItem.id).every(Boolean)).length;
+      return { done, total: topics.length, percent: topics.length ? Math.round((done / topics.length) * 100) : 0 };
+    }
+
+    function getOverallProgress() {
+      const topics = getAllTopics();
+      const done = topics.filter(item => getChecklist(item.topic.id).every(Boolean)).length;
+      const started = topics.filter(item => getChecklist(item.topic.id).some(Boolean)).length;
+      return { done, started, total: topics.length, percent: topics.length ? Math.round((done / topics.length) * 100) : 0 };
+    }
+
+    function getNextTopic() {
+      return getAllTopics().find(item => !getChecklist(item.topic.id).every(Boolean)) || getAllTopics()[0];
+    }
+
+    function getLastTopic() {
+      return findTopic(state.lastTopicId || getAllTopics()[0].topic.id);
+    }
+
+    function formatDate(iso) {
+      if (!iso) return "Ainda sem registro";
+      return new Intl.DateTimeFormat("pt-BR", { dateStyle: "short", timeStyle: "short" }).format(new Date(iso));
+    }
+
+    function escapeHTML(value) {
+      return String(value ?? "").replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      }[char]));
+    }
+
+    function statusBadge(topicId) {
+      const status = getTopicStatus(topicId);
+      return `<span class="status-badge" style="--status-color: ${status.color}">${status.label}</span>`;
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => toast.classList.remove("show"), 2600);
+    }
+
+    function render() {
+      renderNav();
+      if (appView === "dashboard") renderDashboard();
+      if (appView === "trail") renderTrail(selectedTrailId);
+      if (appView === "topic") renderTopic(selectedTopicId);
+      if (appView === "revisions") renderRevisions();
+      if (appView === "projects") renderProjects();
+      if (appView === "backup") renderBackup();
+      renderNotes();
+      bindMainEvents();
+      bindNotesEvents();
+      mainPanel.focus({ preventScroll: true });
+    }
+
+    function navItems() {
+      return [
+        { id: "dashboard", title: "Dashboard", icon: "⌂", type: "view" },
+        ...curriculum.filter(trail => trail.id !== "projects").map(trail => ({ id: trail.id, title: trail.title, icon: trail.icon, type: "trail" })),
+        { id: "projects", title: "Projetos", icon: "▣", type: "projects" },
+        { id: "revisions", title: "Revisões", icon: "↻", type: "view" },
+        { id: "backup", title: "Backup", icon: "⇩", type: "view" }
+      ];
+    }
+
+    function renderNav() {
+      navList.innerHTML = navItems().map(item => {
+        const progress = curriculum.some(trail => trail.id === item.id) ? `${getTrailProgress(item.id).percent}%` : "";
+        const active = (item.type === "trail" && appView === "trail" && selectedTrailId === item.id) || appView === item.id || (item.type === "projects" && appView === "projects");
+        return `<li>
+          <button class="nav-button ${active ? "active" : ""}" data-nav="${item.id}" data-type="${item.type}">
+            <span class="nav-icon">${escapeHTML(item.icon)}</span>
+            <span>${escapeHTML(item.title)}</span>
+            <span class="nav-percent">${progress}</span>
+          </button>
+        </li>`;
+      }).join("");
+
+      navList.querySelectorAll("[data-nav]").forEach(button => {
+        button.addEventListener("click", () => {
+          const id = button.dataset.nav;
+          const type = button.dataset.type;
+          if (type === "trail") {
+            appView = "trail";
+            selectedTrailId = id;
+          } else if (type === "projects") {
+            appView = "projects";
+          } else {
+            appView = id;
+          }
+          render();
+        });
+      });
+    }
+
+    function renderTopbar(label) {
+      return `<div class="topbar">
+        <div class="breadcrumb">${label}</div>
+        <label class="search-box">
+          <span>⌕</span>
+          <input id="topicSearch" type="search" placeholder="Buscar assunto" autocomplete="off">
+        </label>
+      </div>`;
+    }
+
+    function renderDashboard() {
+      const overall = getOverallProgress();
+      const last = getLastTopic();
+      const next = getNextTopic();
+      const completed = getCompletedTopics().slice(0, 3);
+      mainPanel.innerHTML = `${renderTopbar("Dashboard")}
+        <section class="dashboard-grid">
+          <article class="card card-pad span-7">
+            <h2 class="card-title">Progresso geral</h2>
+            <div class="progress-summary">
+              <div class="progress-ring" style="--value: ${overall.percent * 3.6}deg"><span class="metric-value">${overall.percent}%</span></div>
+              <div class="metric-list">
+                <span>Assuntos concluídos <strong>${overall.done} / ${overall.total}</strong></span>
+                <span>Assuntos iniciados <strong>${overall.started}</strong></span>
+                <span>Trilhas ativas <strong>${curriculum.length}</strong></span>
+              </div>
+            </div>
+          </article>
+          <article class="card card-pad span-5 continue-card">
+            <h2 class="card-title">Continuar de onde parou</h2>
+            <div class="focus-box">
+              <h3>${escapeHTML(last.trail.title)}</h3>
+              <p>${escapeHTML(last.topic.title)}</p>
+              <p>${nextAction(last.topic.id)}</p>
+            </div>
+            <button class="btn" data-open-topic="${last.topic.id}">Continuar estudo ›</button>
+          </article>
+          <article class="card card-pad span-7">
+            <h2 class="card-title">Progresso por trilha</h2>
+            <div class="track-grid" style="margin-top:12px">${curriculum.map(renderTrackCard).join("")}</div>
+          </article>
+          <article class="card card-pad span-5">
+            <h2 class="card-title">Estudo de hoje</h2>
+            <div class="today-list">
+              <div class="mini-row"><span>Trilha</span><strong>${escapeHTML(next.trail.title)}</strong></div>
+              <div class="mini-row"><span>Tópico</span><strong>${escapeHTML(next.topic.title)}</strong></div>
+              <div class="mini-row"><span>Ação</span><small>${nextAction(next.topic.id)}</small></div>
+            </div>
+            <div style="margin-top:14px"><button class="btn secondary" data-open-topic="${next.topic.id}">Começar agora</button></div>
+          </article>
+          <article class="card card-pad span-4">
+            <h2 class="card-title">Próximas revisões</h2>
+            <div class="small-stack" style="margin-top:12px">${completed.length ? completed.map(renderMiniRevision).join("") : `<div class="empty-state">Conclua um tópico para acender a primeira revisão.</div>`}</div>
+          </article>
+          <article class="card card-pad span-4">
+            <h2 class="card-title">Projetos em andamento</h2>
+            <div class="small-stack" style="margin-top:12px">${practicalProjects.slice(0, 3).map(project => renderMiniProject(project)).join("")}</div>
+          </article>
+          <article class="card card-pad span-4">
+            <h2 class="card-title">Ritmo da adega</h2>
+            <div class="terminal-tip">Cada tópico concluído vira uma garrafa guardada na sua própria jornada de programação. O objetivo é estudar com constância, sem pressa vazia.</div>
+          </article>
+        </section>`;
+    }
+
+    function renderTrackCard(trail) {
+      const progress = getTrailProgress(trail.id);
+      return `<div class="track-card" style="--track-color: ${trail.color}">
+        <button data-open-trail="${trail.id}">
+          <div class="track-head">
+            <span class="track-icon">${escapeHTML(trail.icon)}</span>
+            <span>${progress.percent}%</span>
+          </div>
+          <h3 class="track-title">${escapeHTML(trail.title)}</h3>
+          <p class="track-desc">${escapeHTML(trail.description)}</p>
+          <div class="progress-bar"><div class="progress-fill" style="--fill-color:${trail.color}; width:${progress.percent}%"></div></div>
+        </button>
+      </div>`;
+    }
+
+    function renderMiniRevision(item) {
+      return `<div class="mini-row">
+        <div><strong>${escapeHTML(item.topic.title)}</strong><br><small>${escapeHTML(item.trail.title)}, concluído em ${formatDate(state.progress[item.topic.id].completedAt)}</small></div>
+        <span>3, 7 e 15 dias</span>
+      </div>`;
+    }
+
+    function renderMiniProject(project) {
+      const percent = getProjectPercent(project.id);
+      return `<div class="mini-row">
+        <div><strong>${escapeHTML(project.title)}</strong><br><small>${percent}% do checklist</small></div>
+        <div class="progress-bar" style="width:90px"><div class="progress-fill" style="width:${percent}%"></div></div>
+      </div>`;
+    }
+
+    function renderTrail(trailId) {
+      const trail = findTrail(trailId);
+      const progress = getTrailProgress(trail.id);
+      mainPanel.innerHTML = `${renderTopbar(`Trilha > ${escapeHTML(trail.title)}`)}
+        <section class="trail-layout">
+          <div class="page-title">
+            <div>
+              <h2>${escapeHTML(trail.title)}</h2>
+              <p>${escapeHTML(trail.description)}</p>
+            </div>
+            <span class="status-badge" style="--status-color: ${trail.color}">${progress.done} de ${progress.total} concluídos</span>
+          </div>
+          <article class="card card-pad">
+            <h3 class="section-title">Progresso da trilha</h3>
+            <div class="progress-bar"><div class="progress-fill" style="--fill-color:${trail.color}; width:${progress.percent}%"></div></div>
+          </article>
+          <div>${trail.modules.map(module => renderModule(module)).join("")}</div>
+        </section>`;
+    }
+
+    function renderModule(module) {
+      return `<article class="module-card">
+        <div class="module-head">
+          <h3>${escapeHTML(module.title)}</h3>
+          <p>${escapeHTML(module.description)}</p>
+        </div>
+        <div class="module-list">${module.topics.map(topicItem => {
+          const status = getTopicStatus(topicItem.id);
+          return `<button class="topic-item ${selectedTopicId === topicItem.id ? "active" : ""}" data-open-topic="${topicItem.id}">
+            <span class="status-dot" style="--status-color:${status.color}">${status.icon}</span>
+            <span>${escapeHTML(topicItem.title)}</span>
+            ${statusBadge(topicItem.id)}
+          </button>`;
+        }).join("")}</div>
+      </article>`;
+    }
+
+    function renderTopic(topicId) {
+      const item = findTopic(topicId);
+      const topicItem = item.topic;
+      const checklist = getChecklist(topicId);
+      const status = getTopicStatus(topicId);
+      mainPanel.innerHTML = `${renderTopbar(`${escapeHTML(item.trail.title)} > ${escapeHTML(item.module.title)}`)}
+        <section class="topic-layout">
+          <article class="topic-hero">
+            <div class="topic-head">
+              <div>
+                <h2 class="topic-title">${escapeHTML(topicItem.title)}</h2>
+                <p class="topic-desc">${escapeHTML(topicItem.description)}</p>
+              </div>
+              <span class="status-badge" style="--status-color:${status.color}">${status.label}</span>
+            </div>
+            <div><strong>Objetivo:</strong> ${escapeHTML(topicItem.objective)}</div>
+            <ul class="concept-list">${topicItem.mainConcepts.map(concept => `<li>${escapeHTML(concept)}</li>`).join("")}</ul>
+          </article>
+          <article class="card card-pad">
+            <h3 class="section-title">Aulas e materiais</h3>
+            <div class="lesson-grid">${topicItem.lessons.map(renderLesson).join("")}</div>
+          </article>
+          <article class="card card-pad">
+            <h3 class="section-title">Checklist de conclusão</h3>
+            <ul class="check-list">${CHECKLIST_ITEMS.map((label, index) => `<li>
+              <label class="check-item">
+                <input type="checkbox" data-check-index="${index}" ${checklist[index] ? "checked" : ""}>
+                <span>${escapeHTML(label)}</span>
+              </label>
+            </li>`).join("")}</ul>
+          </article>
+          <article class="practice-box">
+            <h3>Tarefa prática</h3>
+            <p>${escapeHTML(topicItem.projectTask)}</p>
+          </article>
+          <div class="action-row">
+            <button class="btn secondary" data-open-trail="${item.trail.id}">Ver trilha</button>
+            <button class="btn ghost" data-copy-review="${topicId}">Copiar dica de revisão</button>
+          </div>
+        </section>`;
+    }
+
+    function renderLesson(lessonItem) {
+      const action = lessonItem.type.toLowerCase().includes("aula") || lessonItem.type.toLowerCase().includes("projeto") ? "Assistir" : "Abrir";
+      return `<article class="lesson-card">
+        <h4>${escapeHTML(lessonItem.title)}</h4>
+        <div class="lesson-meta">
+          <span>${escapeHTML(lessonItem.source)}</span>
+          <span>${escapeHTML(lessonItem.type)} · ${escapeHTML(lessonItem.estimatedTime)}</span>
+        </div>
+        <a class="btn secondary" href="${escapeHTML(lessonItem.url)}" target="_blank" rel="noopener noreferrer">${action}</a>
+      </article>`;
+    }
+
+    function renderNotes() {
+      const item = findTopic(selectedTopicId);
+      if (!item) {
+        notesPanel.innerHTML = `<div class="notes-empty">Selecione um tópico para escrever suas notas.</div>`;
+        return;
+      }
+      const notes = state.notes[selectedTopicId] || {};
+      const status = getTopicStatus(selectedTopicId);
+      const labels = {
+        understood: "O que entendi",
+        doubts: "Dúvidas",
+        practice: "Aplicação prática"
+      };
+      notesPanel.innerHTML = `<div class="notes-head">
+        <div class="notes-title">
+          <h2>${escapeHTML(item.topic.title)}</h2>
+          <span class="status-badge" style="--status-color:${status.color}">${status.label}</span>
+        </div>
+      </div>
+      <div class="notes-tabs">${Object.entries(labels).map(([key, label]) => `<button class="tab-button ${activeNoteTab === key ? "active" : ""}" data-note-tab="${key}">${label}</button>`).join("")}</div>
+      <div class="note-editor">
+        <label for="noteText">${labels[activeNoteTab]}</label>
+        <textarea id="noteText" data-note-field="${activeNoteTab}" spellcheck="true" placeholder="Escreva com suas palavras, conecte conceitos e registre as dúvidas que merecem voltar depois.">${escapeHTML(notes[activeNoteTab] || "")}</textarea>
+        <div class="save-line">
+          <span>Salvo automaticamente</span>
+          <span id="saveIndicator">Última atualização: ${formatDate(notes.updatedAt)}</span>
+        </div>
+      </div>
+      <div class="terminal-tip">${escapeHTML(item.topic.reviewHint)}</div>`;
+    }
+
+    function renderRevisions() {
+      const completed = getCompletedTopics();
+      mainPanel.innerHTML = `${renderTopbar("Revisões")}
+        <section class="trail-layout">
+          <div class="page-title">
+            <div>
+              <h2>Revisões</h2>
+              <p>Revisite os tópicos concluídos com calma, primeiro em três dias, depois em sete e quinze dias.</p>
+            </div>
+          </div>
+          <div class="topic-grid">${completed.length ? completed.map(item => `<article class="lesson-card">
+            <h3 class="project-title">${escapeHTML(item.topic.title)}</h3>
+            <p class="project-meta">${escapeHTML(item.trail.title)} · concluído em ${formatDate(state.progress[item.topic.id].completedAt)}</p>
+            <div class="concept-list">
+              <span class="tag">Revisar em 3 dias</span>
+              <span class="tag">Revisar em 7 dias</span>
+              <span class="tag">Revisar em 15 dias</span>
+            </div>
+            <div style="margin-top:12px"><button class="btn secondary" data-open-topic="${item.topic.id}">Abrir tópico</button></div>
+          </article>`).join("") : `<div class="empty-state">Quando concluir um tópico, suas revisões aparecem aqui.</div>`}</div>
+        </section>`;
+    }
+
+    function getCompletedTopics() {
+      return getAllTopics().filter(item => getChecklist(item.topic.id).every(Boolean)).sort((a, b) => {
+        const dateA = state.progress[a.topic.id]?.completedAt || "";
+        const dateB = state.progress[b.topic.id]?.completedAt || "";
+        return dateB.localeCompare(dateA);
+      });
+    }
+
+    function renderProjects() {
+      mainPanel.innerHTML = `${renderTopbar("Projetos")}
+        <section class="trail-layout">
+          <div class="page-title">
+            <div>
+              <h2>Projetos práticos</h2>
+              <p>Escolha projetos pequenos, termine versões reais e use cada entrega como uma prova concreta da sua evolução.</p>
+            </div>
+          </div>
+          <div class="project-grid">${practicalProjects.map(renderProjectCard).join("")}</div>
+        </section>`;
+    }
+
+    function renderProjectCard(project) {
+      const saved = state.projectProgress[project.id] || {};
+      const checks = project.checklist.map((_, index) => Boolean(saved.checklist?.[index]));
+      const percent = getProjectPercent(project.id);
+      const status = percent === 100 ? "Concluído" : percent > 0 ? "Em andamento" : "Não iniciado";
+      return `<article class="project-card">
+        <div class="card-head">
+          <h3 class="project-title">${escapeHTML(project.title)}</h3>
+          <span class="status-badge" style="--status-color:${percent === 100 ? "var(--green)" : percent > 0 ? "var(--blue)" : "#77788d"}">${status}</span>
+        </div>
+        <p class="project-meta">${escapeHTML(project.description)}</p>
+        <div class="concept-list">${project.subjects.map(subject => `<span class="tag">${escapeHTML(subject)}</span>`).join("")}</div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${percent}%"></div></div>
+        <ul class="project-checklist">${project.checklist.map((label, index) => `<li>
+          <label>
+            <input type="checkbox" data-project-id="${project.id}" data-project-index="${index}" ${checks[index] ? "checked" : ""}>
+            <span>${escapeHTML(label)}</span>
+          </label>
+        </li>`).join("")}</ul>
+        <button class="btn secondary" data-open-topic="${project.topicId}">Abrir detalhes</button>
+      </article>`;
+    }
+
+    function getProjectPercent(projectId) {
+      const project = practicalProjects.find(item => item.id === projectId);
+      const saved = state.projectProgress[projectId]?.checklist || [];
+      const done = project.checklist.filter((_, index) => saved[index]).length;
+      return Math.round((done / project.checklist.length) * 100);
+    }
+
+    function renderBackup() {
+      mainPanel.innerHTML = `${renderTopbar("Backup")}
+        <section class="backup-layout">
+          <div class="page-title">
+            <div>
+              <h2>Backup e sincronização manual</h2>
+              <p>Exporte seus dados em JSON, importe quando precisar e limpe tudo apenas quando tiver certeza.</p>
+            </div>
+          </div>
+          <article class="backup-card card">
+            <h3>Seus dados locais</h3>
+            <p>O Code Wine salva progresso, anotações, último tópico acessado, projetos e configurações no navegador.</p>
+            <div class="backup-actions">
+              <button class="btn" id="exportData">Exportar dados</button>
+              <label class="btn secondary" for="importData">Importar dados</label>
+              <input class="import-input" id="importData" type="file" accept="application/json">
+              <button class="btn danger" id="clearData">Limpar dados</button>
+            </div>
+          </article>
+        </section>`;
+    }
+
+    function bindMainEvents() {
+      mainPanel.querySelectorAll("[data-open-topic]").forEach(button => {
+        button.addEventListener("click", () => openTopic(button.dataset.openTopic));
+      });
+
+      mainPanel.querySelectorAll("[data-open-trail]").forEach(button => {
+        button.addEventListener("click", () => {
+          selectedTrailId = button.dataset.openTrail;
+          appView = "trail";
+          render();
+        });
+      });
+
+      mainPanel.querySelectorAll("[data-check-index]").forEach(input => {
+        input.addEventListener("change", () => {
+          const checklist = getChecklist(selectedTopicId);
+          checklist[Number(input.dataset.checkIndex)] = input.checked;
+          dataStore.updateTopicProgress(selectedTopicId, checklist);
+          render();
+          showToast("Progresso salvo.");
+        });
+      });
+
+      mainPanel.querySelectorAll("[data-project-id]").forEach(input => {
+        input.addEventListener("change", () => {
+          const projectId = input.dataset.projectId;
+          const project = practicalProjects.find(item => item.id === projectId);
+          const current = state.projectProgress[projectId]?.checklist || [];
+          const checklist = project.checklist.map((_, index) => Boolean(current[index]));
+          checklist[Number(input.dataset.projectIndex)] = input.checked;
+          state.projectProgress[projectId] = { checklist, updatedAt: new Date().toISOString() };
+          dataStore.saveState(state);
+          render();
+          showToast("Projeto atualizado.");
+        });
+      });
+
+      const exportButton = document.getElementById("exportData");
+      if (exportButton) exportButton.addEventListener("click", exportBackup);
+
+      const importInput = document.getElementById("importData");
+      if (importInput) importInput.addEventListener("change", importBackup);
+
+      const clearButton = document.getElementById("clearData");
+      if (clearButton) clearButton.addEventListener("click", clearBackup);
+
+      const copyReview = mainPanel.querySelector("[data-copy-review]");
+      if (copyReview) copyReview.addEventListener("click", async () => {
+        const hint = findTopic(copyReview.dataset.copyReview).topic.reviewHint;
+        try {
+          await navigator.clipboard.writeText(hint);
+          showToast("Dica de revisão copiada.");
+        } catch {
+          showToast("Dica de revisão pronta para copiar no painel.");
+        }
+      });
+
+      const search = document.getElementById("topicSearch");
+      if (search) search.addEventListener("input", () => renderSearchResults(search.value));
+    }
+
+    function bindNotesEvents() {
+      notesPanel.querySelectorAll("[data-note-tab]").forEach(button => {
+        button.addEventListener("click", () => {
+          activeNoteTab = button.dataset.noteTab;
+          renderNotes();
+          bindNotesEvents();
+        });
+      });
+
+      const textarea = document.getElementById("noteText");
+      if (textarea) {
+        textarea.addEventListener("input", () => {
+          clearTimeout(noteTimer);
+          noteTimer = setTimeout(() => {
+            dataStore.updateNote(selectedTopicId, textarea.dataset.noteField, textarea.value);
+            const indicator = document.getElementById("saveIndicator");
+            if (indicator) indicator.textContent = `Última atualização: ${formatDate(state.notes[selectedTopicId]?.updatedAt)}`;
+            showToast("Anotação salva automaticamente.");
+          }, 500);
+        });
+      }
+    }
+
+    function renderSearchResults(query) {
+      const normalized = query.trim().toLowerCase();
+      if (!normalized) return;
+      const results = getAllTopics().filter(item => `${item.trail.title} ${item.topic.title} ${item.topic.description}`.toLowerCase().includes(normalized)).slice(0, 8);
+      mainPanel.innerHTML = `${renderTopbar("Busca")}
+        <section class="trail-layout">
+          <div class="page-title">
+            <div>
+              <h2>Resultados para ${escapeHTML(query)}</h2>
+              <p>Abra qualquer tópico encontrado para continuar estudando.</p>
+            </div>
+          </div>
+          <div class="topic-grid">${results.length ? results.map(item => `<button class="topic-item" data-open-topic="${item.topic.id}">
+            <span class="status-dot" style="--status-color:${getTopicStatus(item.topic.id).color}">${getTopicStatus(item.topic.id).icon}</span>
+            <span>${escapeHTML(item.trail.title)} · ${escapeHTML(item.topic.title)}</span>
+            ${statusBadge(item.topic.id)}
+          </button>`).join("") : `<div class="empty-state">Nenhum assunto encontrado.</div>`}</div>
+        </section>`;
+      bindMainEvents();
+      const input = document.getElementById("topicSearch");
+      if (input) {
+        input.value = query;
+        input.focus();
+        input.setSelectionRange(query.length, query.length);
+      }
+    }
+
+    function openTopic(topicId) {
+      selectedTopicId = topicId;
+      const found = findTopic(topicId);
+      selectedTrailId = found.trail.id;
+      appView = "topic";
+      dataStore.setLastTopic(topicId);
+      render();
+    }
+
+    function nextAction(topicId) {
+      const checklist = getChecklist(topicId);
+      const index = checklist.findIndex(item => !item);
+      return index >= 0 ? CHECKLIST_ITEMS[index] : "Revisar e aplicar em outro projeto";
+    }
+
+    function exportBackup() {
+      const blob = new Blob([dataStore.exportData()], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `code-wine-backup-${new Date().toISOString().slice(0, 10)}.json`;
+      link.click();
+      URL.revokeObjectURL(url);
+      showToast("Backup exportado.");
+    }
+
+    function importBackup(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          dataStore.importData(JSON.parse(reader.result));
+          selectedTopicId = state.lastTopicId || getAllTopics()[0].topic.id;
+          render();
+          showToast("Backup importado com sucesso.");
+        } catch {
+          showToast("Não foi possível importar esse arquivo.");
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = "";
+    }
+
+    function clearBackup() {
+      const confirmed = confirm("Tem certeza que deseja apagar todos os dados salvos do Code Wine?");
+      if (!confirmed) return;
+      state = structuredClone(defaultState);
+      dataStore.saveState(state);
+      selectedTopicId = getAllTopics()[0].topic.id;
+      appView = "dashboard";
+      render();
+      showToast("Dados limpos.");
+    }
+
+    render();
+  </script>
+</body>
+</html>
